@@ -2,12 +2,19 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>日本旅行 2024 | 极简助手</title>
+    
+    <!-- iOS PWA 适配标签 -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="日本行">
+    
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- SortableJS CDN: 用于实现丝滑的拖拽排序 -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
         
@@ -22,6 +29,21 @@
             color: var(--apple-text);
             -webkit-font-smoothing: antialiased;
             overscroll-behavior-y: contain;
+            /* 适配 iOS 安全区域：底部留白 */
+            padding-bottom: env(safe-area-inset-bottom, 20px);
+            /* 优化移动端体验：禁止长按菜单及点击高亮 */
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* 移除移动端点击时的蓝色高亮阴影 */
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* 按钮及交互元素禁止文字选中，提升原生感 */
+        button, .btn-active, .event-card, #date-tabs div {
+            user-select: none;
+            -webkit-user-select: none;
         }
 
         ::-webkit-scrollbar { width: 0px; background: transparent; }
@@ -59,12 +81,12 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="selection:bg-yellow-200 pb-10">
+<body class="selection:bg-yellow-200">
 
-    <!-- 顶栏：全新文字版入口 -->
-    <header class="fixed top-0 left-0 right-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100 px-4 h-16 flex items-center justify-between">
+    <!-- 顶栏：适配 iOS 安全区域 -->
+    <header class="fixed top-0 left-0 right-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100 px-4 flex items-center justify-between" 
+            style="padding-top: env(safe-area-inset-top, 0px); height: calc(4.5rem + env(safe-area-inset-top, 0px));">
         <div class="flex items-center space-x-4">
-            <!-- 计算器、看板、口语全部移动到左侧并改为纯文字 -->
             <button onclick="openCalc()" class="text-xs font-bold text-gray-400 hover:text-black transition-colors">汇率换算</button>
             <button onclick="openDashboard()" class="text-xs font-bold text-gray-400 hover:text-black transition-colors">开销看板</button>
             <button onclick="openPhrases()" class="text-xs font-bold text-gray-400 hover:text-black transition-colors">常用口语</button>
@@ -75,11 +97,12 @@
         </div>
     </header>
 
-    <main class="pt-20 px-6" id="app">
-        <!-- Tabs 区域：通过增加 py 解决切边问题 -->
-        <div class="sticky top-16 z-30 -mx-6 px-6 bg-white overflow-hidden">
+    <!-- 主容器：增加顶部 padding 避开 Header -->
+    <main class="px-6" id="app" style="padding-top: calc(5.5rem + env(safe-area-inset-top, 0px));">
+        <!-- Tabs 区域 -->
+        <div class="sticky z-30 -mx-6 px-6 bg-white overflow-hidden" style="top: calc(4.5rem + env(safe-area-inset-top, 0px));">
             <div id="date-tabs" class="flex gap-3 overflow-x-auto no-scrollbar items-start py-6">
-                <!-- 由 JS 渲染选项卡 -->
+                <!-- 由 JS 渲染 -->
             </div>
         </div>
 
@@ -92,11 +115,11 @@
         <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeDashboard()"></div>
         <div class="relative w-full max-w-sm bg-white rounded-[3rem] p-8 modal-enter shadow-2xl overflow-y-auto max-h-[80vh]">
             <div class="flex justify-between items-center mb-8">
-                <h3 class="text-2xl font-bold">费用清单</h3>
+                <h3 class="text-2xl font-bold text-black">费用清单</h3>
                 <button onclick="closeDashboard()" class="text-gray-400 font-bold text-sm">关闭</button>
             </div>
             <div class="p-6 bg-blue-600 rounded-[2.5rem] mb-8 text-white shadow-xl">
-                <p class="text-xs font-bold opacity-70 uppercase mb-1">人民币总计</p>
+                <p class="text-xs font-bold opacity-70 uppercase tracking-widest mb-1">人民币总计</p>
                 <p id="total-cny-only" class="text-4xl font-black">0.00</p>
             </div>
             <div class="space-y-4" id="category-summary-cny"></div>
@@ -108,13 +131,13 @@
         <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeCalc()"></div>
         <div class="relative w-full max-w-sm bg-white rounded-[3rem] p-8 modal-enter shadow-2xl">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-bold">汇率换算</h3>
+                <h3 class="text-2xl font-bold text-black">汇率换算</h3>
                 <button onclick="closeCalc()" class="text-gray-400 font-bold text-sm">关闭</button>
             </div>
             <div class="space-y-4">
                 <div class="p-4 bg-gray-50 rounded-2xl">
                     <p class="text-[10px] font-bold text-gray-400 mb-1">日元 JPY</p>
-                    <input id="calc-jpy" type="number" placeholder="0" oninput="convert('jpy')" class="w-full bg-transparent text-3xl font-bold outline-none">
+                    <input id="calc-jpy" type="number" placeholder="0" oninput="convert('jpy')" class="w-full bg-transparent text-3xl font-bold outline-none text-black">
                 </div>
                 <div class="p-4 bg-gray-50 rounded-2xl">
                     <p class="text-[10px] font-bold text-gray-400 mb-1">人民币 CNY</p>
@@ -132,13 +155,13 @@
             <h3 class="text-2xl font-bold mb-6 italic text-black">编辑行程</h3>
             <div class="space-y-4 mb-8">
                 <div class="grid grid-cols-2 gap-3">
-                    <input id="in-time" type="text" placeholder="时间" class="w-full p-4 bg-gray-50 rounded-2xl font-bold outline-none">
-                    <input id="in-place" type="text" placeholder="地点" class="w-full p-4 bg-gray-50 rounded-2xl font-bold outline-none">
+                    <input id="in-time" type="text" placeholder="时间" class="w-full p-4 bg-gray-50 rounded-2xl font-bold outline-none text-black">
+                    <input id="in-place" type="text" placeholder="地点" class="w-full p-4 bg-gray-50 rounded-2xl font-bold outline-none text-black">
                 </div>
-                <input id="in-task" type="text" placeholder="内容" class="w-full p-4 bg-gray-50 rounded-2xl font-bold outline-none">
+                <input id="in-task" type="text" placeholder="内容" class="w-full p-4 bg-gray-50 rounded-2xl font-bold outline-none text-black">
                 <div class="flex gap-3">
-                    <div class="flex-1 bg-gray-50 p-4 rounded-2xl flex items-center"><span class="mr-2 text-gray-400 font-bold">¥</span><input id="in-cost" type="number" placeholder="日元金额" class="w-full bg-transparent font-bold outline-none"></div>
-                    <select id="in-cat" class="bg-gray-50 p-4 rounded-2xl font-bold outline-none"><option value="">分类</option><option value="🍱 餐饮">🍱 餐饮</option><option value="🚄 交通">🚄 交通</option><option value="🏨 酒店">🏨 酒店</option><option value="🛍️ 购物">🛍️ 购物</option><option value="🎫 门票">🎫 门票</option></select>
+                    <div class="flex-1 bg-gray-50 p-4 rounded-2xl flex items-center"><span class="mr-2 text-gray-400 font-bold">¥</span><input id="in-cost" type="number" placeholder="日元金额" class="w-full bg-transparent font-bold outline-none text-black"></div>
+                    <select id="in-cat" class="bg-gray-50 p-4 rounded-2xl font-bold outline-none text-black"><option value="">分类</option><option value="🍱 餐饮">🍱 餐饮</option><option value="🚄 交通">🚄 交通</option><option value="🏨 酒店">🏨 酒店</option><option value="🛍️ 购物">🛍️ 购物</option><option value="🎫 门票">🎫 门票</option></select>
                 </div>
                 <div>
                     <p class="text-[10px] font-bold text-gray-400 mb-3 uppercase">选择配色</p>
@@ -153,7 +176,7 @@
             </div>
             <div class="flex gap-3">
                 <button onclick="deleteCurrentEvent()" id="del-btn" class="flex-1 py-4 bg-red-50 text-red-600 rounded-2xl font-bold hidden">删除条目</button>
-                <button onclick="saveEvent()" class="flex-[2] py-4 bg-black text-white rounded-2xl font-bold">保存</button>
+                <button onclick="saveEvent()" class="flex-[2] py-4 bg-black text-white rounded-2xl font-bold shadow-xl">保存</button>
             </div>
         </div>
     </div>
@@ -161,19 +184,19 @@
     <!-- 4. 常用口语面板 -->
     <div id="phrase-panel" class="hidden fixed inset-0 z-50 flex items-end">
         <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="closePhrases()"></div>
-        <div class="relative w-full bg-white rounded-t-[40px] p-8 modal-enter h-[80vh] flex flex-col">
+        <div class="relative w-full bg-white rounded-t-[40px] p-8 modal-enter h-[80vh] flex flex-col pb-10">
             <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-6"></div>
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-bold">常用口语</h3>
+                <h3 class="text-2xl font-bold text-black">常用口语</h3>
                 <button onclick="toggleAddPhrase()" class="text-sm font-bold bg-gray-100 px-4 py-2 rounded-full">新增</button>
             </div>
             <div id="add-phrase-box" class="hidden mb-6 p-4 bg-gray-50 rounded-3xl space-y-3">
-                <input id="new-zh" type="text" placeholder="中文" class="w-full p-3 bg-white rounded-xl font-bold outline-none">
-                <input id="new-jp" type="text" placeholder="日语" class="w-full p-3 bg-white rounded-xl font-bold outline-none">
-                <input id="new-en" type="text" placeholder="注音" class="w-full p-3 bg-white rounded-xl font-bold outline-none">
+                <input id="new-zh" type="text" placeholder="中文" class="w-full p-3 bg-white rounded-xl font-bold outline-none text-black">
+                <input id="new-jp" type="text" placeholder="日语" class="w-full p-3 bg-white rounded-xl font-bold outline-none text-black">
+                <input id="new-en" type="text" placeholder="注音" class="w-full p-3 bg-white rounded-xl font-bold outline-none text-black">
                 <button onclick="addNewPhrase()" class="w-full py-3 bg-black text-white rounded-xl font-bold">加入面板</button>
             </div>
-            <div id="phrase-list" class="flex-1 overflow-y-auto space-y-3 pb-10 text-black"></div>
+            <div id="phrase-list" class="flex-1 overflow-y-auto space-y-3 text-black"></div>
         </div>
     </div>
 
@@ -183,10 +206,10 @@
         <div class="relative w-full max-w-sm bg-white rounded-[3rem] p-8 modal-enter shadow-2xl border-4 border-red-500/20">
             <h3 class="text-2xl font-bold mb-4 text-red-500">确认重置？</h3>
             <p class="text-gray-500 text-sm mb-6 leading-relaxed">此操作将清空所有已编辑的行程和口语。确认请在下方输入 <span class="font-bold text-black bg-yellow-200 px-1">ok</span>：</p>
-            <input id="reset-verify-input" type="text" placeholder="输入 ok" class="w-full p-4 bg-gray-50 rounded-2xl font-bold outline-none mb-6 border-2 border-transparent focus:border-red-500 transition-all">
+            <input id="reset-verify-input" type="text" placeholder="输入 ok" class="w-full p-4 bg-gray-50 rounded-2xl font-bold outline-none mb-6 border-2 border-transparent focus:border-red-500 transition-all text-black">
             <div class="flex gap-3">
                 <button onclick="closeResetModal()" class="flex-1 py-4 bg-gray-100 text-gray-500 rounded-2xl font-bold">取消</button>
-                <button onclick="executeReset()" class="flex-1 py-4 bg-red-500 text-white rounded-2xl font-bold shadow-lg shadow-red-200">确认清空</button>
+                <button onclick="executeReset()" class="flex-1 py-4 bg-red-500 text-white rounded-2xl font-bold shadow-lg">确认清空</button>
             </div>
         </div>
     </div>
@@ -202,12 +225,12 @@
         <div class="relative w-full max-w-sm bg-white rounded-[3rem] p-8 modal-enter shadow-2xl">
             <h3 class="text-2xl font-bold mb-6 italic text-black">新增行程日期</h3>
             <div class="space-y-4">
-                <input id="new-day-date" type="text" placeholder="完整日期 (如 4月27日)" class="w-full p-4 bg-gray-50 rounded-2xl font-bold outline-none">
-                <input id="new-day-short" type="text" placeholder="简写 (如 4.27)" class="w-full p-4 bg-gray-50 rounded-2xl font-bold outline-none">
-                <select id="new-day-week" class="w-full p-4 bg-gray-50 rounded-2xl font-bold outline-none">
+                <input id="new-day-date" type="text" placeholder="完整日期 (如 4月27日)" class="w-full p-4 bg-gray-50 rounded-2xl font-bold outline-none text-black">
+                <input id="new-day-short" type="text" placeholder="简写 (如 4.27)" class="w-full p-4 bg-gray-50 rounded-2xl font-bold outline-none text-black">
+                <select id="new-day-week" class="w-full p-4 bg-gray-50 rounded-2xl font-bold outline-none text-black">
                     <option value="周一">周一</option><option value="周二">周二</option><option value="周三">周三</option><option value="周四">周四</option><option value="周五">周五</option><option value="周六">周六</option><option value="周日">周日</option>
                 </select>
-                <input id="new-day-loc" type="text" placeholder="地点 (如 东京)" class="w-full p-4 bg-gray-50 rounded-2xl font-bold outline-none">
+                <input id="new-day-loc" type="text" placeholder="地点 (如 东京)" class="w-full p-4 bg-gray-50 rounded-2xl font-bold outline-none text-black">
             </div>
             <button onclick="confirmAddDay()" class="w-full mt-6 py-4 bg-black text-white rounded-2xl font-bold">确认添加</button>
         </div>
@@ -217,21 +240,32 @@
     <div id="toast" class="hidden fixed bottom-10 left-1/2 -translate-x-1/2 z-[110] bg-black/90 text-white px-8 py-3 rounded-full text-xs font-bold shadow-2xl">操作成功</div>
 
     <script>
+        // --- 核心常量 ---
+        const RATE = 0.048;
+        const STORAGE_KEY_ITINERARY = 'japan_2024_itinerary';
+        const STORAGE_KEY_PHRASES = 'japan_2024_phrases';
+
         // --- 默认毛坯配置 ---
         const DEFAULT_ITINERARY = [
             { date: '4月18日', short: '4.18', day: '周四', loc: '未设定', events: [] }
         ];
         const DEFAULT_PHRASES = [];
 
-        // --- 状态管理 ---
-        let itinerary = JSON.parse(JSON.stringify(DEFAULT_ITINERARY));
-        let phrases = [...DEFAULT_PHRASES];
+        // --- 状态初始化 (从本地读取) ---
+        let itinerary = JSON.parse(localStorage.getItem(STORAGE_KEY_ITINERARY)) || JSON.parse(JSON.stringify(DEFAULT_ITINERARY));
+        let phrases = JSON.parse(localStorage.getItem(STORAGE_KEY_PHRASES)) || [...DEFAULT_PHRASES];
+        
         let isEditMode = false;
         let activeDayIndex = 0; 
         let activeEditEventIndex = null;
         let selectedColor = 'none';
         let sortableInstance = null;
-        const RATE = 0.048;
+
+        // --- 数据持久化函数 ---
+        function saveToLocal() {
+            localStorage.setItem(STORAGE_KEY_ITINERARY, JSON.stringify(itinerary));
+            localStorage.setItem(STORAGE_KEY_PHRASES, JSON.stringify(phrases));
+        }
 
         function render() {
             renderTabs();
@@ -244,7 +278,6 @@
             
             itinerary.forEach((day, index) => {
                 const tab = document.createElement('div');
-                // 增加 pt 和 pr 空间
                 tab.className = "relative flex-shrink-0 pt-3 pr-3";
                 
                 const tabBtn = document.createElement('div');
@@ -254,7 +287,6 @@
                 
                 if (isEditMode) {
                     const delDayBtn = document.createElement('button');
-                    // 叉号位置精确微调
                     delDayBtn.className = "absolute top-1 right-1 w-6 h-6 bg-red-500 text-white rounded-full text-[12px] flex items-center justify-center shadow-lg z-10 font-bold border-2 border-white";
                     delDayBtn.innerHTML = "×";
                     delDayBtn.onclick = (e) => { e.stopPropagation(); deleteDay(index); };
@@ -302,7 +334,7 @@
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
                         </div>` : ''}
                         <div class="min-w-[65px] flex-shrink-0 text-lg font-bold">${ev.time}</div>
-                        <div class="ml-4 flex-1 overflow-hidden">
+                        <div class="ml-4 flex-1 overflow-hidden text-left">
                             <div class="flex justify-between items-center mb-0.5"><p class="text-[10px] font-bold opacity-60 truncate">${ev.place}</p>${ev.cost > 0 ? `<span class="text-[9px] font-black bg-white/30 px-2 py-0.5 rounded-full flex-shrink-0">¥${ev.cost}</span>` : ''}</div>
                             <p class="text-base font-bold truncate">${ev.task}</p>
                             ${ev.cat ? `<div class="mt-1"><span class="text-[8px] font-bold bg-black text-white px-2 py-0.5 rounded-md">${ev.cat}</span></div>` : ''}
@@ -326,6 +358,7 @@
                     const dayEvents = itinerary[activeDayIndex].events;
                     const movedItem = dayEvents.splice(evt.oldIndex, 1)[0];
                     dayEvents.splice(evt.newIndex, 0, movedItem);
+                    saveToLocal(); // 排序后保存
                     renderDayContent();
                 }
             });
@@ -339,6 +372,7 @@
             render();
         }
 
+        // --- 重置逻辑 ---
         function openResetModal() {
             document.getElementById('reset-verify-input').value = '';
             document.getElementById('reset-confirm-modal').classList.remove('hidden');
@@ -350,23 +384,43 @@
                 itinerary = JSON.parse(JSON.stringify(DEFAULT_ITINERARY));
                 phrases = [...DEFAULT_PHRASES];
                 activeDayIndex = 0;
+                saveToLocal(); // 重置后保存
                 showToast("数据已恢复默认");
                 closeResetModal();
                 render();
             } else { showToast("请输入 ok 确认"); }
         }
 
-        function showToast(msg) {
-            const toast = document.getElementById('toast');
-            toast.innerText = msg;
-            toast.classList.remove('hidden');
-            setTimeout(() => toast.classList.add('hidden'), 1500);
+        // --- 增删改逻辑 ---
+        function saveEvent() {
+            const newEv = {
+                time: document.getElementById('in-time').value || '--:--',
+                place: document.getElementById('in-place').value || '未知',
+                task: document.getElementById('in-task').value || '计划',
+                cost: parseInt(document.getElementById('in-cost').value) || 0,
+                cat: document.getElementById('in-cat').value,
+                color: selectedColor
+            };
+            if (activeEditEventIndex !== null) itinerary[activeDayIndex].events[activeEditEventIndex] = newEv;
+            else itinerary[activeDayIndex].events.push(newEv);
+            
+            saveToLocal(); // 保存数据
+            closeModal(); 
+            render();
+        }
+
+        function deleteCurrentEvent() { 
+            itinerary[activeDayIndex].events.splice(activeEditEventIndex, 1); 
+            saveToLocal(); // 保存数据
+            closeModal(); 
+            render(); 
         }
 
         function deleteDay(idx) {
             if (confirm('确认删除这一整天的行程吗？')) {
                 itinerary.splice(idx, 1);
                 activeDayIndex = Math.max(0, activeDayIndex - 1);
+                saveToLocal(); // 保存数据
                 render();
             }
         }
@@ -380,8 +434,50 @@
                 itinerary.push({ date, short, day: week, loc, events: [] });
                 document.getElementById('add-day-modal').classList.add('hidden');
                 activeDayIndex = itinerary.length - 1;
+                saveToLocal(); // 保存数据
                 render();
             }
+        }
+
+        function updateLoc(v) { 
+            itinerary[activeDayIndex].loc = v; 
+            saveToLocal(); // 实时保存地点修改
+        }
+
+        // --- 常用口语逻辑 ---
+        function addNewPhrase() {
+            const zh = document.getElementById('new-zh').value, jp = document.getElementById('new-jp').value, en = document.getElementById('new-en').value;
+            if (zh && jp) { 
+                phrases.unshift({ zh, jp, en: en || 'USER' }); 
+                document.getElementById('new-zh').value = ''; 
+                document.getElementById('new-jp').value = ''; 
+                document.getElementById('new-en').value = ''; 
+                saveToLocal(); // 保存口语
+                toggleAddPhrase(); 
+                renderPhrases(); 
+            }
+        }
+
+        function deletePhrase(i) { 
+            phrases.splice(i, 1); 
+            saveToLocal(); // 保存口语
+            renderPhrases(); 
+        }
+
+        // --- 辅助 UI 函数 ---
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 1500);
+        }
+
+        function openCalc() { document.getElementById('calc-modal').classList.remove('hidden'); }
+        function closeCalc() { document.getElementById('calc-modal').classList.add('hidden'); }
+        function convert(s) {
+            const j = document.getElementById('calc-jpy'), c = document.getElementById('calc-cny');
+            if (s === 'jpy') c.value = j.value ? (j.value * RATE).toFixed(2) : '';
+            else j.value = c.value ? (c.value / RATE).toFixed(0) : '';
         }
 
         function openDashboard() {
@@ -397,13 +493,6 @@
         }
 
         function closeDashboard() { document.getElementById('dashboard-modal').classList.add('hidden'); }
-        function openCalc() { document.getElementById('calc-modal').classList.remove('hidden'); }
-        function closeCalc() { document.getElementById('calc-modal').classList.add('hidden'); }
-        function convert(s) {
-            const j = document.getElementById('calc-jpy'), c = document.getElementById('calc-cny');
-            if (s === 'jpy') c.value = j.value ? (j.value * RATE).toFixed(2) : '';
-            else j.value = c.value ? (c.value / RATE).toFixed(0) : '';
-        }
 
         function openEditor(dIdx, eIdx = null) {
             if (!isEditMode) return;
@@ -425,23 +514,7 @@
             document.getElementById('col-' + color).classList.add('ring-4', 'ring-black');
         }
 
-        function saveEvent() {
-            const newEv = {
-                time: document.getElementById('in-time').value || '--:--',
-                place: document.getElementById('in-place').value || '未知',
-                task: document.getElementById('in-task').value || '计划',
-                cost: parseInt(document.getElementById('in-cost').value) || 0,
-                cat: document.getElementById('in-cat').value,
-                color: selectedColor
-            };
-            if (activeEditEventIndex !== null) itinerary[activeDayIndex].events[activeEditEventIndex] = newEv;
-            else itinerary[activeDayIndex].events.push(newEv);
-            closeModal(); render();
-        }
-
-        function deleteCurrentEvent() { itinerary[activeDayIndex].events.splice(activeEditEventIndex, 1); closeModal(); render(); }
         function closeModal() { document.getElementById('edit-modal').classList.add('hidden'); }
-        function updateLoc(v) { itinerary[activeDayIndex].loc = v; }
 
         function openPhrases() { renderPhrases(); document.getElementById('phrase-panel').classList.remove('hidden'); }
         function closePhrases() { document.getElementById('phrase-panel').classList.add('hidden'); }
@@ -450,12 +523,7 @@
             list.innerHTML = phrases.length === 0 ? '<p class="text-gray-300 text-center py-10 font-bold italic">点击上方新增常用语</p>' : 
                 phrases.map((p, idx) => `<div class="flex gap-2"><div onclick="showFlashcard('${p.zh}','${p.jp}','${p.en}')" class="flex-1 p-5 bg-gray-50 rounded-2xl flex justify-between items-center btn-active"><div><p class="text-[10px] text-gray-400 font-bold uppercase mb-1 text-left">${p.en}</p><p class="text-lg font-bold text-left">${p.zh}</p></div><div class="text-2xl opacity-10">→</div></div><button onclick="deletePhrase(${idx})" class="w-12 bg-red-50 text-red-500 rounded-2xl font-bold btn-active">🗑️</button></div>`).join('');
         }
-        function deletePhrase(i) { phrases.splice(i, 1); renderPhrases(); }
         function toggleAddPhrase() { document.getElementById('add-phrase-box').classList.toggle('hidden'); }
-        function addNewPhrase() {
-            const zh = document.getElementById('new-zh').value, jp = document.getElementById('new-jp').value, en = document.getElementById('new-en').value;
-            if (zh && jp) { phrases.unshift({ zh, jp, en: en || 'USER' }); document.getElementById('new-zh').value = ''; document.getElementById('new-jp').value = ''; document.getElementById('new-en').value = ''; toggleAddPhrase(); renderPhrases(); }
-        }
         function showFlashcard(zh, jp, en) { document.getElementById('f-zh').innerText = zh; document.getElementById('f-jp').innerText = jp; document.getElementById('f-en').innerText = en; document.getElementById('flash-modal').classList.remove('hidden'); }
 
         window.onload = render;
