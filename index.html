@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>日本旅行 2026</title>
+    <title>日本旅行 2026 </title>
     
     <!-- iOS PWA 适配 -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -59,8 +59,8 @@
     <header class="fixed top-0 left-0 right-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100 px-4 flex items-center justify-between" 
             style="padding-top: env(safe-area-inset-top, 0px); height: calc(4.5rem + env(safe-area-inset-top, 0px));">
         <div class="flex items-center space-x-3">
-            <button onclick="openCalc()" class="text-xs font-bold text-gray-400">汇率</button>
-            <button onclick="openDashboard()" class="text-xs font-bold text-gray-400">账单</button>
+            <button onclick="openCalc()" class="text-xs font-bold text-gray-400">汇率换算</button>
+            <button onclick="openDashboard()" class="text-xs font-bold text-gray-400">开销</button>
             <button onclick="openMemoryStats()" class="text-xs font-bold text-blue-400">内存</button>
             <button onclick="exportConfig()" class="text-xs font-bold text-gray-400">导出</button>
             <button onclick="document.getElementById('import-input').click()" class="text-xs font-bold text-gray-400">导入</button>
@@ -88,7 +88,7 @@
         <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeDashboard()"></div>
         <div class="relative w-full max-w-sm bg-white rounded-[3rem] p-8 modal-enter shadow-2xl overflow-y-auto max-h-[80vh]">
             <div class="flex justify-between items-center mb-8">
-                <h3 class="text-2xl font-bold">费用清单</h3>
+                <h3 class="text-2xl font-bold text-black">费用清单</h3>
                 <button onclick="closeDashboard()" class="text-gray-400 font-bold text-sm">关闭</button>
             </div>
             <div class="p-6 bg-blue-600 rounded-[2.5rem] mb-8 text-white shadow-xl shadow-blue-100">
@@ -105,14 +105,14 @@
         <div class="relative w-full max-w-sm bg-white rounded-[3rem] p-8 modal-enter shadow-2xl">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-2xl font-bold">存储空间</h3>
-                <button onclick="closeMemoryStats()" class="text-gray-400 font-bold text-sm">关闭</button>
+                <button onclick="closeMemoryStats()" class="text-gray-400 font-bold text-sm text-black">关闭</button>
             </div>
-            <div class="p-8 bg-gray-50 rounded-[2.5rem] text-center">
+            <div class="p-8 bg-gray-50 rounded-[2.5rem] text-center text-black">
                 <p id="memory-used" class="text-4xl font-black mb-4">0 MB</p>
                 <div class="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
-                    <div id="memory-bar" class="h-full bg-blue-500 transition-all" style="width: 0%"></div>
+                    <div id="memory-bar" class="h-full bg-blue-500 transition-all text-black" style="width: 0%"></div>
                 </div>
-                <p class="text-[10px] text-gray-400 mt-4 font-medium uppercase tracking-widest">Storage Cap: 5.00 MB</p>
+                <p class="text-[10px] text-gray-400 mt-4 font-medium uppercase tracking-widest text-black">Storage Cap: 5.00 MB</p>
             </div>
         </div>
     </div>
@@ -120,9 +120,9 @@
     <!-- 弹窗：编辑项目 -->
     <div id="edit-modal" class="hidden fixed inset-0 z-50 flex items-end text-black">
         <div class="absolute inset-0 bg-black/40" onclick="closeModal()"></div>
-        <div class="relative w-full bg-white rounded-t-[40px] p-8 modal-enter max-h-[95vh] overflow-y-auto pb-12">
+        <div class="relative w-full bg-white rounded-t-[40px] p-8 modal-enter max-h-[95vh] overflow-y-auto pb-12 text-black">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-bold italic">编辑项目</h3>
+                <h3 class="text-2xl font-bold italic text-black">编辑项目</h3>
                 <button onclick="closeModal()" class="text-gray-400 font-bold text-sm">关闭</button>
             </div>
             <div class="space-y-4 mb-8">
@@ -132,11 +132,14 @@
                         <input id="in-time" type="time" class="w-full bg-transparent font-bold outline-none text-black">
                     </div>
                     <div class="p-4 bg-gray-50 rounded-2xl">
-                        <p class="text-[10px] font-bold text-gray-400 mb-1 uppercase">地点</p>
-                        <input id="in-place" type="text" placeholder="地点" class="w-full bg-transparent font-bold outline-none text-black">
+                        <p class="text-[10px] font-bold text-gray-400 mb-1 uppercase">地点 (选填)</p>
+                        <input id="in-place" type="text" placeholder="去哪儿?" class="w-full bg-transparent font-bold outline-none text-black">
                     </div>
                 </div>
-                <input id="in-task" type="text" placeholder="具体行程内容..." class="w-full p-5 bg-gray-50 rounded-2xl font-bold outline-none text-black">
+                <div class="p-4 bg-gray-50 rounded-2xl">
+                     <p class="text-[10px] font-bold text-gray-400 mb-1 uppercase">行程内容</p>
+                     <textarea id="in-task" placeholder="干点什么..." class="w-full bg-transparent font-bold outline-none text-black min-h-[100px] resize-none"></textarea>
+                </div>
                 
                 <!-- 日元自动转换区 -->
                 <div class="space-y-3">
@@ -153,8 +156,8 @@
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
                         </button>
                     </div>
-                    <div class="flex gap-3">
-                        <div class="flex-1 bg-gray-50 p-4 rounded-2xl flex items-center">
+                    <div class="flex gap-3 text-black">
+                        <div class="flex-1 bg-gray-50 p-4 rounded-2xl flex items-center text-black">
                             <span class="mr-2 text-gray-400 font-black">CN¥</span>
                             <input id="in-cost" type="number" placeholder="人民币金额" class="w-full bg-transparent font-bold outline-none text-black text-lg">
                         </div>
@@ -165,13 +168,13 @@
                 </div>
                 
                 <!-- 图片区域 -->
-                <div class="p-4 bg-gray-50 rounded-2xl flex items-center justify-between text-black">
+                <div class="p-4 bg-gray-50 rounded-2xl flex items-center justify-between">
                     <div class="flex items-center space-x-3">
-                        <div id="img-preview-box" class="w-12 h-12 bg-gray-200 rounded-lg overflow-hidden flex items-center justify-center text-black">🖼️</div>
+                        <div id="img-preview-box" class="w-12 h-12 bg-gray-200 rounded-lg overflow-hidden flex items-center justify-center">🖼️</div>
                         <span id="img-status-text" class="text-xs font-bold text-gray-400">无图</span>
                     </div>
                     <div class="flex space-x-2">
-                        <button onclick="document.getElementById('img-input').click()" class="px-4 py-2 bg-white rounded-xl text-[10px] font-bold border text-black">上传</button>
+                        <button onclick="document.getElementById('img-input').click()" class="px-4 py-2 bg-white rounded-xl text-[10px] font-bold border">上传</button>
                         <button id="del-img-btn" onclick="clearSelectedImg()" class="hidden px-4 py-2 bg-red-50 text-red-500 rounded-xl text-[10px] font-bold">删除</button>
                     </div>
                     <input type="file" id="img-input" accept="image/*" class="hidden" onchange="handleImageUpload(this)">
@@ -186,17 +189,17 @@
                 </div>
             </div>
             <div class="flex gap-3">
-                <button onclick="deleteCurrentEvent()" id="del-btn" class="flex-1 py-4 bg-red-50 text-red-600 rounded-2xl font-bold hidden">删除</button>
-                <button onclick="saveEvent()" class="flex-[2] py-4 bg-black text-white rounded-2xl font-bold shadow-xl">保存更改</button>
+                <button onclick="deleteCurrentEvent()" id="del-btn" class="flex-1 py-4 bg-red-50 text-red-600 rounded-2xl font-bold hidden text-black">删除</button>
+                <button onclick="saveEvent()" class="flex-[2] py-4 bg-black text-white rounded-2xl font-bold shadow-xl text-white">保存更改</button>
             </div>
         </div>
     </div>
 
-    <!-- 弹窗：汇率/大图/重置 -->
+    <!-- 弹窗：重置/汇率/大图 -->
     <div id="calc-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-6 text-black">
         <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeCalc()"></div>
         <div class="relative w-full max-w-sm bg-white rounded-[3rem] p-8 modal-enter shadow-2xl">
-            <div class="flex justify-between items-center mb-6"><h3 class="text-2xl font-bold">汇率换算</h3><button onclick="closeCalc()" class="text-gray-400 font-bold text-sm">关闭</button></div>
+            <div class="flex justify-between items-center mb-6 text-black"><h3 class="text-2xl font-bold text-black">汇率换算</h3><button onclick="closeCalc()" class="text-gray-400 font-bold text-sm">关闭</button></div>
             <div class="space-y-4">
                 <div class="p-4 bg-gray-50 rounded-2xl"><p class="text-[10px] font-bold text-gray-400 mb-1 uppercase text-black">日元 JPY</p><input id="calc-jpy" type="number" oninput="convert('jpy')" class="w-full bg-transparent text-3xl font-bold outline-none text-black"></div>
                 <div class="p-4 bg-gray-50 rounded-2xl"><p class="text-[10px] font-bold text-gray-400 mb-1 uppercase text-black">人民币 CNY</p><input id="calc-cny" type="number" oninput="convert('cny')" class="w-full bg-transparent text-3xl font-bold outline-none text-blue-600"></div>
@@ -211,7 +214,7 @@
     <div id="reset-confirm-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-6 text-black">
         <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeResetModal()"></div>
         <div class="relative w-full max-w-sm bg-white rounded-[3rem] p-8 modal-enter shadow-2xl text-center">
-            <h3 class="text-2xl font-bold mb-4 text-red-500">要清空这一天的行程吗？</h3>
+            <h3 class="text-2xl font-bold mb-4 text-red-500">要清空吗？</h3>
             <p class="text-gray-500 text-sm mb-6 leading-relaxed">确认请在下方输入 <span class="font-bold text-black px-1">ok</span>：</p>
             <input id="reset-verify-input" type="text" placeholder="输入 ok" class="w-full p-4 bg-gray-50 rounded-2xl font-bold outline-none mb-6 border-2 border-transparent focus:border-red-500 text-center uppercase tracking-widest text-black">
             <div class="flex gap-3"><button onclick="closeResetModal()" class="flex-1 py-4 bg-gray-100 text-gray-500 rounded-2xl font-bold">取消</button><button onclick="executeReset()" class="flex-1 py-4 bg-red-500 text-white rounded-2xl font-bold shadow-lg">确认</button></div>
@@ -223,8 +226,8 @@
         <div class="relative w-full max-w-sm bg-white rounded-[3rem] p-8 modal-enter shadow-2xl">
             <div class="flex justify-between items-center mb-6"><h3 class="text-2xl font-bold italic">新增日期</h3><button onclick="closeAddDayModal()" class="text-gray-400 font-bold text-sm">关闭</button></div>
             <div class="space-y-4">
-                <div class="p-4 bg-gray-50 rounded-2xl"><p class="text-[10px] font-bold text-gray-400 mb-1 uppercase text-black">选择日期</p><input id="new-day-picker" type="date" class="w-full bg-transparent font-bold outline-none text-black"></div>
-                <div class="p-4 bg-gray-50 rounded-2xl"><p class="text-[10px] font-bold text-gray-400 mb-1 uppercase text-black">流程概述</p><input id="new-day-loc" type="text" placeholder="无" class="w-full bg-transparent font-bold outline-none text-black"></div>
+                <div class="p-4 bg-gray-50 rounded-2xl text-black"><p class="text-[10px] font-bold text-gray-400 mb-1 uppercase text-black">选择日期</p><input id="new-day-picker" type="date" class="w-full bg-transparent font-bold outline-none text-black"></div>
+                <div class="p-4 bg-gray-50 rounded-2xl text-black"><p class="text-[10px] font-bold text-gray-400 mb-1 uppercase text-black">流程概述</p><input id="new-day-loc" type="text" placeholder="无" class="w-full bg-transparent font-bold outline-none text-black"></div>
             </div>
             <button onclick="confirmAddDay()" class="w-full mt-8 py-4 bg-black text-white rounded-2xl font-bold btn-active">确认添加</button>
         </div>
@@ -234,10 +237,8 @@
 
     <script>
         const RATE = 0.048;
-        // 升级版本号以强制刷新用户默认配置
-        const STORAGE_KEY_ITINERARY = 'japan_2024_itinerary_v6';
+        const STORAGE_KEY_ITINERARY = 'japan_2024_itinerary_v8'; // 升级版本确保干净
 
-        // 设置默认配置：4月17日 周三，流程为“无”
         const DEFAULT_ITINERARY = [{ date: '4月17日', short: '4.17', day: '周三', loc: '无', events: [] }];
 
         let itinerary = JSON.parse(localStorage.getItem(STORAGE_KEY_ITINERARY)) || JSON.parse(JSON.stringify(DEFAULT_ITINERARY));
@@ -254,6 +255,7 @@
 
         function renderTabs() {
             const tabsContainer = document.getElementById('date-tabs');
+            if(!tabsContainer) return;
             tabsContainer.innerHTML = '';
             itinerary.forEach((day, index) => {
                 const tab = document.createElement('div');
@@ -283,15 +285,15 @@
 
         function renderDayContent() {
             const container = document.getElementById('day-content');
-            if (itinerary.length === 0) return;
+            if (!container || itinerary.length === 0) return;
             const day = itinerary[activeDayIndex];
             container.innerHTML = `
-                <div class="flex justify-between items-start mb-6">
+                <div class="flex justify-between items-start mb-6 text-black">
                     <div>
                         <h2 class="text-3xl font-black tracking-tight text-black">${day.date}</h2>
-                        <div class="mt-2 inline-flex items-center px-3 py-1.5 bg-gray-50 border border-gray-100 rounded-xl">
-                            <span class="text-[10px] font-black uppercase text-gray-400 mr-2 tracking-widest">流程:</span>
-                            <span id="loc-editable" oninput="updateLoc(this.innerText)" class="text-sm font-bold text-black outline-none min-w-[20px]" contenteditable="${isEditMode}">${day.loc}</span>
+                        <div class="mt-2 inline-flex items-center px-4 py-2 bg-gray-100 border border-gray-200 rounded-2xl shadow-sm">
+                            <span class="text-[10px] font-black uppercase text-gray-500 mr-2 tracking-widest bg-white px-1.5 py-0.5 rounded border border-gray-100">流程</span>
+                            <span id="loc-editable" oninput="updateLoc(this.innerText)" class="text-sm font-extrabold text-black outline-none min-w-[30px]" contenteditable="${isEditMode}">${day.loc}</span>
                         </div>
                     </div>
                 </div>
@@ -301,39 +303,58 @@
             const list = document.getElementById('events-list');
             if (day.events.length > 0) {
                 list.innerHTML = day.events.map((ev, eIdx) => `
-                    <div data-index="${eIdx}" onclick="openEditor(${activeDayIndex}, ${eIdx})" class="event-card relative flex items-center p-5 rounded-[2rem] transition-all active:scale-[0.98] high-${ev.color || 'none'} text-black shadow-sm border border-gray-50">
-                        ${isEditMode ? `<div class="mr-3 text-gray-300 opacity-50 flex-shrink-0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></div>` : ''}
-                        <div class="min-w-[65px] flex-shrink-0 text-lg font-bold">${ev.time}</div>
-                        <div class="ml-4 flex-1 overflow-hidden text-left">
-                            <div class="flex justify-between items-center mb-0.5"><p class="text-[10px] font-bold opacity-60 truncate">${ev.place}</p>${ev.cost > 0 ? `<span class="text-[9px] font-black bg-white/30 px-2 py-0.5 rounded-full flex-shrink-0">¥${ev.cost}</span>` : ''}</div>
-                            <p class="text-base font-bold truncate">${ev.task}</p>
-                            ${ev.image ? `<div class="mt-2"><img src="${ev.image}" class="w-16 h-16 rounded-lg object-cover border-2 border-white shadow-sm" onclick="viewFullImg(event, '${ev.image}')"></div>` : ''}
+                    <div data-index="${eIdx}" onclick="openEditor(${activeDayIndex}, ${eIdx})" class="event-card relative flex items-start p-6 rounded-[2.5rem] transition-all active:scale-[0.98] high-${ev.color || 'none'} text-black shadow-sm border border-gray-50">
+                        ${isEditMode ? `<div class="mt-1 mr-4 text-gray-300 opacity-50 flex-shrink-0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></div>` : ''}
+                        <div class="min-w-[65px] flex-shrink-0 text-xl font-black pt-1">${ev.time}</div>
+                        <div class="ml-2 flex-1 text-left">
+                            <div class="flex justify-between items-start">
+                                <div class="flex-1 pr-2">
+                                    ${ev.place ? `<p class="text-[10px] font-black opacity-40 uppercase tracking-tighter mb-1">📍 ${ev.place}</p>` : ''}
+                                    <p class="text-base font-bold leading-relaxed whitespace-pre-wrap">${ev.task}</p>
+                                    ${ev.image ? `<div class="mt-3"><img src="${ev.image}" class="w-20 h-20 rounded-2xl object-cover border-2 border-white shadow-md" onclick="viewFullImg(event, '${ev.image}')"></div>` : ''}
+                                    ${ev.cat ? `<div class="mt-3"><span class="text-[9px] font-black bg-black text-white px-2 py-1 rounded-lg">${ev.cat}</span></div>` : ''}
+                                </div>
+                                ${ev.cost > 0 ? `<div class="flex-shrink-0 text-right ml-2"><p class="text-xl font-black text-blue-600 tracking-tighter">¥${ev.cost}</p></div>` : ''}
+                            </div>
                         </div>
                     </div>
                 `).join('');
             }
             if (isEditMode) {
-                document.getElementById('add-placeholder').innerHTML = `<div onclick="openEditor(${activeDayIndex})" class="py-10 text-center bg-gray-50 rounded-[2rem] border-2 border-dashed border-gray-200 font-bold text-gray-300 active:bg-gray-100 transition-colors">新增行程项目</div>`;
+                document.getElementById('add-placeholder').innerHTML = `<div onclick="openEditor(${activeDayIndex})" class="py-12 text-center bg-gray-50 rounded-[2.5rem] border-2 border-dashed border-gray-200 font-black text-gray-300 active:bg-gray-100 transition-colors">新增行程项目</div>`;
                 initSortable();
             } else if (day.events.length === 0) {
-                list.innerHTML = `<div class="py-10 text-center text-gray-200 font-bold">暂无今日行程</div>`;
+                list.innerHTML = `<div class="py-12 text-center text-gray-200 font-bold italic">今日暂无行程</div>`;
             }
         }
 
-        // --- 逻辑函数组 ---
+        // --- 逻辑函数 ---
         function toggleJpyInput() { const toggle = document.getElementById('jpy-toggle'); document.getElementById('jpy-calc-row').classList.toggle('hidden', !toggle.checked); }
-        function applyJpyToCny() { const jpy = parseFloat(document.getElementById('in-jpy-cost').value); if (!isNaN(jpy)) { const cny = Math.round(jpy * RATE * 100) / 100; document.getElementById('in-cost').value = cny; showToast(`已按汇率换算: ¥${cny}`); } }
+        function applyJpyToCny() { const jpy = parseFloat(document.getElementById('in-jpy-cost').value); if (!isNaN(jpy)) { const cny = Math.round(jpy * RATE * 100) / 100; document.getElementById('in-cost').value = cny; showToast(`换算成功`); } }
+        
         function openEditor(dIdx, eIdx = null) {
             if (!isEditMode) return; activeEditEventIndex = eIdx;
             const ev = eIdx !== null ? itinerary[dIdx].events[eIdx] : null;
-            document.getElementById('in-time').value = ev ? ev.time : ''; document.getElementById('in-place').value = ev ? ev.place : ''; document.getElementById('in-task').value = ev ? ev.task : ''; document.getElementById('in-cost').value = ev ? ev.cost : ''; document.getElementById('in-cat').value = ev ? ev.cat : '';
+            document.getElementById('in-time').value = ev ? ev.time : ''; 
+            document.getElementById('in-place').value = ev ? (ev.place || '') : ''; 
+            document.getElementById('in-task').value = ev ? ev.task : ''; 
+            document.getElementById('in-cost').value = ev ? ev.cost : ''; 
+            document.getElementById('in-cat').value = ev ? ev.cat : '';
             selectedImageBase64 = ev ? ev.image : null; updateImgPreview(); selectColor(ev ? (ev.color || 'none') : 'none');
             document.getElementById('jpy-toggle').checked = false; document.getElementById('in-jpy-cost').value = ''; document.getElementById('jpy-calc-row').classList.add('hidden');
             document.getElementById('del-btn').classList.toggle('hidden', ev === null); document.getElementById('edit-modal').classList.remove('hidden');
         }
-        function saveEvent() { const newEv = { time: document.getElementById('in-time').value || '--:--', place: document.getElementById('in-place').value || '未知', task: document.getElementById('in-task').value || '计划', cost: parseFloat(document.getElementById('in-cost').value) || 0, cat: document.getElementById('in-cat').value, color: selectedColor, image: selectedImageBase64 }; if (activeEditEventIndex !== null) itinerary[activeDayIndex].events[activeEditEventIndex] = newEv; else itinerary[activeDayIndex].events.push(newEv); saveToLocal(); closeModal(); render(); }
+
+        function convert(s) { 
+            const j = document.getElementById('calc-jpy'), c = document.getElementById('calc-cny'); 
+            if(!j || !c) return;
+            if (s === 'jpy') c.value = j.value ? (j.value * RATE).toFixed(2) : ''; 
+            else j.value = c.value ? (c.value / RATE).toFixed(0) : ''; 
+        }
+
+        function saveEvent() { const newEv = { time: document.getElementById('in-time').value || '--:--', place: document.getElementById('in-place').value.trim(), task: document.getElementById('in-task').value || '计划', cost: parseFloat(document.getElementById('in-cost').value) || 0, cat: document.getElementById('in-cat').value, color: selectedColor, image: selectedImageBase64 }; if (activeEditEventIndex !== null) itinerary[activeDayIndex].events[activeEditEventIndex] = newEv; else itinerary[activeDayIndex].events.push(newEv); saveToLocal(); closeModal(); render(); }
         function handleImageUpload(input) { const file = input.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = function(e) { const img = new Image(); img.onload = function() { const canvas = document.createElement('canvas'); const MAX_WIDTH = 800; let w = img.width, h = img.height; if (w > MAX_WIDTH) { h *= MAX_WIDTH / w; w = MAX_WIDTH; } canvas.width = w; canvas.height = h; canvas.getContext('2d').drawImage(img, 0, 0, w, h); selectedImageBase64 = canvas.toDataURL('image/jpeg', 0.7); updateImgPreview(); }; img.src = e.target.result; }; reader.readAsDataURL(file); }
-        function updateImgPreview() { const b = document.getElementById('img-preview-box'), s = document.getElementById('img-status-text'), d = document.getElementById('del-img-btn'); if (selectedImageBase64) { b.innerHTML = `<img src="${selectedImageBase64}" class="w-full h-full object-cover">`; s.innerText = "就绪"; d.classList.remove('hidden'); } else { b.innerHTML = `🖼️`; s.innerText = "无图"; d.classList.add('hidden'); } }
+        function updateImgPreview() { const b = document.getElementById('img-preview-box'), s = document.getElementById('img-status-text'), d = document.getElementById('del-img-btn'); if (selectedImageBase64) { b.innerHTML = `<img src="${selectedImageBase64}" class="w-full h-full object-cover">`; s.innerText = "已加载"; d.classList.remove('hidden'); } else { b.innerHTML = `🖼️`; s.innerText = "无图"; d.classList.add('hidden'); } }
         function clearSelectedImg() { selectedImageBase64 = null; updateImgPreview(); }
         function viewFullImg(e, src) { e.stopPropagation(); document.getElementById('viewer-content').src = src; document.getElementById('img-viewer').classList.remove('hidden'); }
         function openMemoryStats() { const used = new Blob([JSON.stringify(localStorage)]).size; const mb = (used / 1024 / 1024).toFixed(2); const percent = Math.min((used / (5 * 1024 * 1024)) * 100, 100).toFixed(1); document.getElementById('memory-used').innerText = `${mb} MB`; document.getElementById('memory-bar').style.width = `${percent}%`; document.getElementById('memory-modal').classList.remove('hidden'); }
@@ -344,10 +365,9 @@
         function toggleEditMode() { isEditMode = !isEditMode; document.getElementById('edit-mode-btn').innerText = isEditMode ? '完成预览' : '进入编辑'; document.getElementById('reset-btn').classList.toggle('hidden', !isEditMode); if (!isEditMode && sortableInstance) { sortableInstance.destroy(); sortableInstance = null; } render(); }
         function executeReset() { if (document.getElementById('reset-verify-input').value.trim().toLowerCase() === 'ok') { itinerary = JSON.parse(JSON.stringify(DEFAULT_ITINERARY)); saveToLocal(); closeResetModal(); render(); } else showToast("请输入 ok"); }
         function confirmAddDay() { const p = document.getElementById('new-day-picker').value; if (!p) return showToast("请选日期"); const d = new Date(p); const w = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"]; const newDay = { date: `${d.getMonth()+1}月${d.getDate()}日`, short: `${d.getMonth()+1}.${d.getDate()}`, day: w[d.getDay()], loc: document.getElementById('new-day-loc').value||'无', events: [] }; itinerary.push(newDay); itinerary.sort((a,b) => { const parse = (s) => { let x=s.split('.'); return new Date(2024, x[0]-1, x[1]) }; return parse(a.short) - parse(b.short); }); saveToLocal(); closeAddDayModal(); activeDayIndex = itinerary.findIndex(x => x.short === newDay.short); render(); }
-        function convert(s) { const j = document.getElementById('calc-jpy'), c = document.getElementById('calc-cny'); if (s === 'jpy') c.value = j.value ? (j.value * RATE).toFixed(2) : ''; else j.value = c.value ? (c.value / RATE).toFixed(0) : ''; }
         function openCalc() { document.getElementById('calc-modal').classList.remove('hidden'); }
         function closeCalc() { document.getElementById('calc-modal').classList.add('hidden'); }
-        function openDashboard() { let t = 0; let cat = {}; itinerary.forEach(d => d.events.forEach(ev => { let c = (parseFloat(ev.cost)||0); t+=c; if(ev.cat) cat[ev.cat]=(cat[ev.cat]||0)+c; })); document.getElementById('total-cny-only').innerText = '¥ ' + t.toLocaleString(undefined, {minimumFractionDigits: 2}); document.getElementById('category-summary-cny').innerHTML = Object.keys(cat).map(k => `<div class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl text-black text-sm"><span class="font-bold">${k}</span><span class="font-black text-blue-600">¥ ${cat[k].toFixed(2)}</span></div>`).join(''); document.getElementById('dashboard-modal').classList.remove('hidden'); }
+        function openDashboard() { let t = 0; let cat = {}; itinerary.forEach(d => d.events.forEach(ev => { let c = (parseFloat(ev.cost)||0); t+=c; if(ev.cat) cat[ev.cat]=(cat[ev.cat]||0)+c; })); document.getElementById('total-cny-only').innerText = '¥ ' + t.toLocaleString(undefined, {minimumFractionDigits: 2}); document.getElementById('category-summary-cny').innerHTML = Object.keys(cat).map(k => `<div class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl text-black text-sm"><span class="font-bold">${k}</span><span class="font-black text-blue-600 text-lg">¥ ${cat[k].toFixed(2)}</span></div>`).join(''); document.getElementById('dashboard-modal').classList.remove('hidden'); }
         function closeDashboard() { document.getElementById('dashboard-modal').classList.add('hidden'); }
         function openAddDayModal() { document.getElementById('add-day-modal').classList.remove('hidden'); }
         function closeAddDayModal() { document.getElementById('add-day-modal').classList.add('hidden'); }
