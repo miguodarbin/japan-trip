@@ -59,11 +59,11 @@
     <header class="fixed top-0 left-0 right-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100 px-4 flex items-center justify-between" 
             style="padding-top: env(safe-area-inset-top, 0px); height: calc(4.5rem + env(safe-area-inset-top, 0px));">
         <div class="flex items-center space-x-3">
-            <button onclick="openCalc()" class="text-xs font-bold text-gray-400">汇率计算</button>
-            <button onclick="openDashboard()" class="text-xs font-bold text-gray-400">开销一览</button>
-            <button onclick="openMemoryStats()" class="text-xs font-bold text-blue-400">内存情况</button>
-            <button onclick="exportConfig()" class="text-xs font-bold text-gray-400">导出配置</button>
-            <button onclick="document.getElementById('import-input').click()" class="text-xs font-bold text-gray-400">导入配置</button>
+            <button onclick="openCalc()" class="text-xs font-bold text-gray-400">汇率</button>
+            <button onclick="openDashboard()" class="text-xs font-bold text-gray-400">账单</button>
+            <button onclick="openMemoryStats()" class="text-xs font-bold text-blue-400">内存</button>
+            <button onclick="exportConfig()" class="text-xs font-bold text-gray-400">导出</button>
+            <button onclick="document.getElementById('import-input').click()" class="text-xs font-bold text-gray-400">导入</button>
             <input type="file" id="import-input" class="hidden" accept=".json" onchange="importConfig(this)">
         </div>
         <div class="flex items-center space-x-2">
