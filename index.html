@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>日本旅行 2026 </title>
+    <title>日本旅行 2026</title>
     
     <!-- iOS PWA 适配 -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -39,6 +39,7 @@
         .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); }
         .tab-active { background: #000; color: #fff; transform: scale(1.05); box-shadow: 0 10px 20px -5px rgba(0,0,0,0.2); }
 
+        /* 高亮颜色 */
         .high-yellow { background-color: #FACC15; }
         .high-red { background-color: #FB7185; color: #fff; }
         .high-blue { background-color: #60A5FA; color: #fff; }
@@ -103,7 +104,7 @@
     <div id="memory-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-6 text-black">
         <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeMemoryStats()"></div>
         <div class="relative w-full max-w-sm bg-white rounded-[3rem] p-8 modal-enter shadow-2xl">
-            <div class="flex justify-between items-center mb-6">
+            <div class="flex justify-between items-center mb-6 text-black">
                 <h3 class="text-2xl font-bold">存储空间</h3>
                 <button onclick="closeMemoryStats()" class="text-gray-400 font-bold text-sm text-black">关闭</button>
             </div>
@@ -161,7 +162,7 @@
                             <span class="mr-2 text-gray-400 font-black">CN¥</span>
                             <input id="in-cost" type="number" placeholder="人民币金额" class="w-full bg-transparent font-bold outline-none text-black text-lg">
                         </div>
-                        <select id="in-cat" class="bg-gray-50 p-4 rounded-2xl font-bold outline-none text-black">
+                        <select id="in-cat" class="bg-gray-50 p-4 rounded-2xl font-bold outline-none text-black text-black">
                             <option value="">分类</option><option value="🍱 餐饮">🍱 餐饮</option><option value="🚄 交通">🚄 交通</option><option value="🏨 酒店">🏨 酒店</option><option value="🛍️ 购物">🛍️ 购物</option><option value="🎫 门票">🎫 门票</option>
                         </select>
                     </div>
@@ -170,11 +171,11 @@
                 <!-- 图片区域 -->
                 <div class="p-4 bg-gray-50 rounded-2xl flex items-center justify-between">
                     <div class="flex items-center space-x-3">
-                        <div id="img-preview-box" class="w-12 h-12 bg-gray-200 rounded-lg overflow-hidden flex items-center justify-center">🖼️</div>
+                        <div id="img-preview-box" class="w-12 h-12 bg-gray-200 rounded-lg overflow-hidden flex items-center justify-center text-black">🖼️</div>
                         <span id="img-status-text" class="text-xs font-bold text-gray-400">无图</span>
                     </div>
                     <div class="flex space-x-2">
-                        <button onclick="document.getElementById('img-input').click()" class="px-4 py-2 bg-white rounded-xl text-[10px] font-bold border">上传</button>
+                        <button onclick="document.getElementById('img-input').click()" class="px-4 py-2 bg-white rounded-xl text-[10px] font-bold border text-black">上传</button>
                         <button id="del-img-btn" onclick="clearSelectedImg()" class="hidden px-4 py-2 bg-red-50 text-red-500 rounded-xl text-[10px] font-bold">删除</button>
                     </div>
                     <input type="file" id="img-input" accept="image/*" class="hidden" onchange="handleImageUpload(this)">
@@ -195,10 +196,10 @@
         </div>
     </div>
 
-    <!-- 弹窗：重置/汇率/大图 -->
+    <!-- 弹窗：其它保持稳定逻辑 -->
     <div id="calc-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-6 text-black">
         <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeCalc()"></div>
-        <div class="relative w-full max-w-sm bg-white rounded-[3rem] p-8 modal-enter shadow-2xl">
+        <div class="relative w-full max-w-sm bg-white rounded-[3rem] p-8 modal-enter shadow-2xl text-black">
             <div class="flex justify-between items-center mb-6 text-black"><h3 class="text-2xl font-bold text-black">汇率换算</h3><button onclick="closeCalc()" class="text-gray-400 font-bold text-sm">关闭</button></div>
             <div class="space-y-4">
                 <div class="p-4 bg-gray-50 rounded-2xl"><p class="text-[10px] font-bold text-gray-400 mb-1 uppercase text-black">日元 JPY</p><input id="calc-jpy" type="number" oninput="convert('jpy')" class="w-full bg-transparent text-3xl font-bold outline-none text-black"></div>
@@ -214,22 +215,22 @@
     <div id="reset-confirm-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-6 text-black">
         <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeResetModal()"></div>
         <div class="relative w-full max-w-sm bg-white rounded-[3rem] p-8 modal-enter shadow-2xl text-center">
-            <h3 class="text-2xl font-bold mb-4 text-red-500">要清空吗？</h3>
+            <h3 class="text-2xl font-bold mb-4 text-red-500 text-black">要清空吗？</h3>
             <p class="text-gray-500 text-sm mb-6 leading-relaxed">确认请在下方输入 <span class="font-bold text-black px-1">ok</span>：</p>
             <input id="reset-verify-input" type="text" placeholder="输入 ok" class="w-full p-4 bg-gray-50 rounded-2xl font-bold outline-none mb-6 border-2 border-transparent focus:border-red-500 text-center uppercase tracking-widest text-black">
-            <div class="flex gap-3"><button onclick="closeResetModal()" class="flex-1 py-4 bg-gray-100 text-gray-500 rounded-2xl font-bold">取消</button><button onclick="executeReset()" class="flex-1 py-4 bg-red-500 text-white rounded-2xl font-bold shadow-lg">确认</button></div>
+            <div class="flex gap-3"><button onclick="closeResetModal()" class="flex-1 py-4 bg-gray-100 text-gray-500 rounded-2xl font-bold text-black">取消</button><button onclick="executeReset()" class="flex-1 py-4 bg-red-500 text-white rounded-2xl font-bold shadow-lg text-white">确认</button></div>
         </div>
     </div>
 
     <div id="add-day-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-6 text-black">
         <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeAddDayModal()"></div>
-        <div class="relative w-full max-w-sm bg-white rounded-[3rem] p-8 modal-enter shadow-2xl">
-            <div class="flex justify-between items-center mb-6"><h3 class="text-2xl font-bold italic">新增日期</h3><button onclick="closeAddDayModal()" class="text-gray-400 font-bold text-sm">关闭</button></div>
+        <div class="relative w-full max-w-sm bg-white rounded-[3rem] p-8 modal-enter shadow-2xl text-black">
+            <div class="flex justify-between items-center mb-6"><h3 class="text-2xl font-bold italic text-black">新增日期</h3><button onclick="closeAddDayModal()" class="text-gray-400 font-bold text-sm text-black">关闭</button></div>
             <div class="space-y-4">
                 <div class="p-4 bg-gray-50 rounded-2xl text-black"><p class="text-[10px] font-bold text-gray-400 mb-1 uppercase text-black">选择日期</p><input id="new-day-picker" type="date" class="w-full bg-transparent font-bold outline-none text-black"></div>
                 <div class="p-4 bg-gray-50 rounded-2xl text-black"><p class="text-[10px] font-bold text-gray-400 mb-1 uppercase text-black">流程概述</p><input id="new-day-loc" type="text" placeholder="无" class="w-full bg-transparent font-bold outline-none text-black"></div>
             </div>
-            <button onclick="confirmAddDay()" class="w-full mt-8 py-4 bg-black text-white rounded-2xl font-bold btn-active">确认添加</button>
+            <button onclick="confirmAddDay()" class="w-full mt-8 py-4 bg-black text-white rounded-2xl font-bold btn-active text-white">确认添加</button>
         </div>
     </div>
 
@@ -237,7 +238,7 @@
 
     <script>
         const RATE = 0.048;
-        const STORAGE_KEY_ITINERARY = 'japan_2024_itinerary_v8'; // 升级版本确保干净
+        const STORAGE_KEY_ITINERARY = 'japan_2024_itinerary_v9'; 
 
         const DEFAULT_ITINERARY = [{ date: '4月17日', short: '4.17', day: '周三', loc: '无', events: [] }];
 
@@ -291,9 +292,10 @@
                 <div class="flex justify-between items-start mb-6 text-black">
                     <div>
                         <h2 class="text-3xl font-black tracking-tight text-black">${day.date}</h2>
-                        <div class="mt-2 inline-flex items-center px-4 py-2 bg-gray-100 border border-gray-200 rounded-2xl shadow-sm">
-                            <span class="text-[10px] font-black uppercase text-gray-500 mr-2 tracking-widest bg-white px-1.5 py-0.5 rounded border border-gray-100">流程</span>
-                            <span id="loc-editable" oninput="updateLoc(this.innerText)" class="text-sm font-extrabold text-black outline-none min-w-[30px]" contenteditable="${isEditMode}">${day.loc}</span>
+                        <!-- 优化：行程概述 UI，去掉深色对比 -->
+                        <div class="mt-2 inline-flex items-center text-sm">
+                            <span class="text-[10px] font-black uppercase text-gray-300 mr-2 tracking-widest">流程:</span>
+                            <span id="loc-editable" oninput="updateLoc(this.innerText)" class="font-extrabold text-black outline-none min-w-[30px]" contenteditable="${isEditMode}">${day.loc}</span>
                         </div>
                     </div>
                 </div>
@@ -306,11 +308,11 @@
                     <div data-index="${eIdx}" onclick="openEditor(${activeDayIndex}, ${eIdx})" class="event-card relative flex items-start p-6 rounded-[2.5rem] transition-all active:scale-[0.98] high-${ev.color || 'none'} text-black shadow-sm border border-gray-50">
                         ${isEditMode ? `<div class="mt-1 mr-4 text-gray-300 opacity-50 flex-shrink-0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></div>` : ''}
                         <div class="min-w-[65px] flex-shrink-0 text-xl font-black pt-1">${ev.time}</div>
-                        <div class="ml-2 flex-1 text-left">
+                        <div class="ml-2 flex-1 text-left overflow-hidden">
                             <div class="flex justify-between items-start">
                                 <div class="flex-1 pr-2">
                                     ${ev.place ? `<p class="text-[10px] font-black opacity-40 uppercase tracking-tighter mb-1">📍 ${ev.place}</p>` : ''}
-                                    <p class="text-base font-bold leading-relaxed whitespace-pre-wrap">${ev.task}</p>
+                                    <p class="text-base font-bold leading-relaxed whitespace-pre-wrap text-black">${ev.task}</p>
                                     ${ev.image ? `<div class="mt-3"><img src="${ev.image}" class="w-20 h-20 rounded-2xl object-cover border-2 border-white shadow-md" onclick="viewFullImg(event, '${ev.image}')"></div>` : ''}
                                     ${ev.cat ? `<div class="mt-3"><span class="text-[9px] font-black bg-black text-white px-2 py-1 rounded-lg">${ev.cat}</span></div>` : ''}
                                 </div>
@@ -361,7 +363,30 @@
         function closeMemoryStats() { document.getElementById('memory-modal').classList.add('hidden'); }
         function exportConfig() { const dataStr = JSON.stringify(itinerary); const blob = new Blob([dataStr], { type: "application/json" }); const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = "JapanTrip_Backup.json"; a.click(); showToast("导出成功"); }
         function importConfig(input) { const file = input.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = function(e) { try { const data = JSON.parse(e.target.result); if (Array.isArray(data)) { itinerary = data; saveToLocal(); activeDayIndex = 0; render(); showToast("导入成功"); } } catch (err) { showToast("无效文件"); } }; reader.readAsText(file); }
-        function initSortable() { const el = document.getElementById('events-list'); if (sortableInstance) sortableInstance.destroy(); sortableInstance = Sortable.create(el, { animation: 250, ghostClass: 'sortable-ghost', dragClass: 'sortable-drag', handle: '.event-card', onEnd: function (evt) { const day = itinerary[activeDayIndex].events; const item = day.splice(evt.oldIndex, 1)[0]; day.splice(evt.newIndex, 0, item); saveToLocal(); renderDayContent(); } }); }
+
+        // --- 核心改动：长按排序逻辑 ---
+        function initSortable() { 
+            const el = document.getElementById('events-list'); 
+            if (sortableInstance) sortableInstance.destroy(); 
+            sortableInstance = Sortable.create(el, { 
+                animation: 250, 
+                ghostClass: 'sortable-ghost', 
+                dragClass: 'sortable-drag', 
+                handle: '.event-card', 
+                // 设置长按延迟，解决滑动冲突
+                delay: 300,            // 长按 300ms 触发拖拽
+                delayOnTouchOnly: true, // 仅在移动端应用延迟
+                touchStartThreshold: 5, // 允许 5px 的抖动，防止手抖误判
+                onEnd: function (evt) { 
+                    const day = itinerary[activeDayIndex].events; 
+                    const item = day.splice(evt.oldIndex, 1)[0]; 
+                    day.splice(evt.newIndex, 0, item); 
+                    saveToLocal(); 
+                    renderDayContent(); 
+                } 
+            }); 
+        }
+
         function toggleEditMode() { isEditMode = !isEditMode; document.getElementById('edit-mode-btn').innerText = isEditMode ? '完成预览' : '进入编辑'; document.getElementById('reset-btn').classList.toggle('hidden', !isEditMode); if (!isEditMode && sortableInstance) { sortableInstance.destroy(); sortableInstance = null; } render(); }
         function executeReset() { if (document.getElementById('reset-verify-input').value.trim().toLowerCase() === 'ok') { itinerary = JSON.parse(JSON.stringify(DEFAULT_ITINERARY)); saveToLocal(); closeResetModal(); render(); } else showToast("请输入 ok"); }
         function confirmAddDay() { const p = document.getElementById('new-day-picker').value; if (!p) return showToast("请选日期"); const d = new Date(p); const w = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"]; const newDay = { date: `${d.getMonth()+1}月${d.getDate()}日`, short: `${d.getMonth()+1}.${d.getDate()}`, day: w[d.getDay()], loc: document.getElementById('new-day-loc').value||'无', events: [] }; itinerary.push(newDay); itinerary.sort((a,b) => { const parse = (s) => { let x=s.split('.'); return new Date(2024, x[0]-1, x[1]) }; return parse(a.short) - parse(b.short); }); saveToLocal(); closeAddDayModal(); activeDayIndex = itinerary.findIndex(x => x.short === newDay.short); render(); }
