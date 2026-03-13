@@ -29,18 +29,12 @@
             color: var(--apple-text);
             -webkit-font-smoothing: antialiased;
             overscroll-behavior-y: contain;
-            /* 适配 iOS 安全区域：底部留白 */
             padding-bottom: env(safe-area-inset-bottom, 20px);
-            /* 优化移动端体验：禁止长按菜单及点击高亮 */
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* 移除移动端点击时的蓝色高亮阴影 */
-        * {
-            -webkit-tap-highlight-color: transparent;
-        }
+        * { -webkit-tap-highlight-color: transparent; }
 
-        /* 按钮及交互元素禁止文字选中，提升原生感 */
         button, .btn-active, .event-card, #date-tabs div {
             user-select: none;
             -webkit-user-select: none;
@@ -56,7 +50,6 @@
 
         .btn-active:active { transform: scale(0.96); opacity: 0.8; }
         
-        /* 编辑状态反馈 */
         .editing-mode [contenteditable="true"] {
             outline: none;
             background: rgba(0,0,0,0.05);
@@ -65,49 +58,53 @@
         }
         
         .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); }
-        .tab-active { background: #000; color: #fff; transform: scale(1.05); box-shadow: 0 10px 20px -5px rgba(0,0,0,0.15); }
+        .tab-active { background: #000; color: #fff; transform: scale(1.05); box-shadow: 0 10px 20px -5px rgba(0,0,0,0.2); }
 
-        /* 高亮颜色 */
         .high-yellow { background-color: #FACC15; color: #000; }
         .high-red { background-color: #FB7185; color: #fff; }
         .high-blue { background-color: #60A5FA; color: #fff; }
         .high-green { background-color: #4ADE80; color: #000; }
         .high-none { background-color: #F9FAFB; color: #000; border: 1px solid #F3F4F6; }
 
-        /* 拖拽时的样式 */
         .sortable-ghost { opacity: 0.3; transform: scale(0.95); }
         .sortable-drag { cursor: grabbing; box-shadow: 0 20px 40px -10px rgba(0,0,0,0.2); }
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
+        
+        /* 针对 Date Picker 的极简样式覆盖 */
+        input[type="date"]::-webkit-inner-spin-button,
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+        }
     </style>
 </head>
 <body class="selection:bg-yellow-200">
 
-    <!-- 顶栏：适配 iOS 安全区域 -->
+    <!-- 顶栏 -->
     <header class="fixed top-0 left-0 right-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100 px-4 flex items-center justify-between" 
             style="padding-top: env(safe-area-inset-top, 0px); height: calc(4.5rem + env(safe-area-inset-top, 0px));">
-        <div class="flex items-center space-x-4">
+        <div class="flex items-center space-x-4 text-black">
             <button onclick="openCalc()" class="text-xs font-bold text-gray-400 hover:text-black transition-colors">汇率换算</button>
             <button onclick="openDashboard()" class="text-xs font-bold text-gray-400 hover:text-black transition-colors">开销看板</button>
             <button onclick="openPhrases()" class="text-xs font-bold text-gray-400 hover:text-black transition-colors">常用口语</button>
         </div>
         <div class="flex items-center space-x-3">
             <button id="reset-btn" onclick="openResetModal()" class="hidden text-xs font-bold px-4 py-2 rounded-full border border-red-500 text-red-500 transition-all active:bg-red-500 active:text-white">重置数据</button>
-            <button onclick="toggleEditMode()" id="edit-mode-btn" class="text-xs font-bold px-4 py-2 rounded-full border border-black transition-all">进入编辑模式</button>
+            <button onclick="toggleEditMode()" id="edit-mode-btn" class="text-xs font-bold px-4 py-2 rounded-full border border-black transition-all text-black">进入编辑模式</button>
         </div>
     </header>
 
-    <!-- 主容器：增加顶部 padding 避开 Header -->
+    <!-- 主容器 -->
     <main class="px-6" id="app" style="padding-top: calc(5.5rem + env(safe-area-inset-top, 0px));">
-        <!-- Tabs 区域 -->
-        <div class="sticky z-30 -mx-6 px-6 bg-white overflow-hidden" style="top: calc(4.5rem + env(safe-area-inset-top, 0px));">
-            <div id="date-tabs" class="flex gap-3 overflow-x-auto no-scrollbar items-start py-6">
+        <!-- Tabs 区域：微调 padding 解决第一个卡片被切边的问题 -->
+        <div class="sticky z-30 -mx-6 bg-white" style="top: calc(4.5rem + env(safe-area-inset-top, 0px));">
+            <div id="date-tabs" class="flex gap-4 overflow-x-auto no-scrollbar items-start py-8 px-6">
                 <!-- 由 JS 渲染 -->
             </div>
         </div>
 
         <!-- 内容区域 -->
-        <div id="day-content" class="mt-4"></div>
+        <div id="day-content" class="mt-2"></div>
     </main>
 
     <!-- 1. 开销看板 -->
@@ -118,11 +115,11 @@
                 <h3 class="text-2xl font-bold text-black">费用清单</h3>
                 <button onclick="closeDashboard()" class="text-gray-400 font-bold text-sm">关闭</button>
             </div>
-            <div class="p-6 bg-blue-600 rounded-[2.5rem] mb-8 text-white shadow-xl">
+            <div class="p-6 bg-blue-600 rounded-[2.5rem] mb-8 text-white shadow-xl shadow-blue-100">
                 <p class="text-xs font-bold opacity-70 uppercase tracking-widest mb-1">人民币总计</p>
                 <p id="total-cny-only" class="text-4xl font-black">0.00</p>
             </div>
-            <div class="space-y-4" id="category-summary-cny"></div>
+            <div class="space-y-4 text-black" id="category-summary-cny"></div>
         </div>
     </div>
 
@@ -219,20 +216,25 @@
         <div class="modal-enter"><p id="f-en" class="text-gray-500 text-lg mb-4 font-bold uppercase"></p><h2 id="f-jp" class="text-white text-5xl font-bold mb-8"></h2><p id="f-zh" class="text-gray-400 text-xl"></p></div>
     </div>
 
-    <!-- 新增日期 Modal -->
-    <div id="add-day-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-6">
-        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="this.parentElement.classList.add('hidden')"></div>
+    <!-- 新增日期 Modal：优化为 Date Picker 并增加关闭按钮 -->
+    <div id="add-day-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-6 text-black">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeAddDayModal()"></div>
         <div class="relative w-full max-w-sm bg-white rounded-[3rem] p-8 modal-enter shadow-2xl">
-            <h3 class="text-2xl font-bold mb-6 italic text-black">新增行程日期</h3>
-            <div class="space-y-4">
-                <input id="new-day-date" type="text" placeholder="完整日期 (如 4月27日)" class="w-full p-4 bg-gray-50 rounded-2xl font-bold outline-none text-black">
-                <input id="new-day-short" type="text" placeholder="简写 (如 4.27)" class="w-full p-4 bg-gray-50 rounded-2xl font-bold outline-none text-black">
-                <select id="new-day-week" class="w-full p-4 bg-gray-50 rounded-2xl font-bold outline-none text-black">
-                    <option value="周一">周一</option><option value="周二">周二</option><option value="周三">周三</option><option value="周四">周四</option><option value="周五">周五</option><option value="周六">周六</option><option value="周日">周日</option>
-                </select>
-                <input id="new-day-loc" type="text" placeholder="地点 (如 东京)" class="w-full p-4 bg-gray-50 rounded-2xl font-bold outline-none text-black">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold italic">新增日期</h3>
+                <button onclick="closeAddDayModal()" class="text-gray-400 font-bold text-sm">关闭</button>
             </div>
-            <button onclick="confirmAddDay()" class="w-full mt-6 py-4 bg-black text-white rounded-2xl font-bold">确认添加</button>
+            <div class="space-y-4">
+                <div class="p-4 bg-gray-50 rounded-2xl">
+                    <p class="text-[10px] font-bold text-gray-400 mb-1">选择具体日期</p>
+                    <input id="new-day-picker" type="date" class="w-full bg-transparent font-bold outline-none">
+                </div>
+                <div class="p-4 bg-gray-50 rounded-2xl">
+                    <p class="text-[10px] font-bold text-gray-400 mb-1">地点 (如 东京)</p>
+                    <input id="new-day-loc" type="text" placeholder="未设定" class="w-full bg-transparent font-bold outline-none">
+                </div>
+            </div>
+            <button onclick="confirmAddDay()" class="w-full mt-8 py-4 bg-black text-white rounded-2xl font-bold btn-active">确认添加</button>
         </div>
     </div>
 
@@ -245,7 +247,7 @@
         const STORAGE_KEY_ITINERARY = 'japan_2024_itinerary';
         const STORAGE_KEY_PHRASES = 'japan_2024_phrases';
 
-        // --- 默认毛坯配置 ---
+        // --- 默认配置 ---
         const DEFAULT_ITINERARY = [
             { date: '4月18日', short: '4.18', day: '周四', loc: '未设定', events: [] }
         ];
@@ -278,7 +280,8 @@
             
             itinerary.forEach((day, index) => {
                 const tab = document.createElement('div');
-                tab.className = "relative flex-shrink-0 pt-3 pr-3";
+                // 优化后的布局类名，防止切边
+                tab.className = "relative flex-shrink-0 pt-2 pr-2 mb-2"; 
                 
                 const tabBtn = document.createElement('div');
                 tabBtn.onclick = () => { activeDayIndex = index; render(); };
@@ -287,7 +290,7 @@
                 
                 if (isEditMode) {
                     const delDayBtn = document.createElement('button');
-                    delDayBtn.className = "absolute top-1 right-1 w-6 h-6 bg-red-500 text-white rounded-full text-[12px] flex items-center justify-center shadow-lg z-10 font-bold border-2 border-white";
+                    delDayBtn.className = "absolute -top-1 -right-1 w-6 h-6 bg-red-500 text-white rounded-full text-[12px] flex items-center justify-center shadow-lg z-10 font-bold border-2 border-white";
                     delDayBtn.innerHTML = "×";
                     delDayBtn.onclick = (e) => { e.stopPropagation(); deleteDay(index); };
                     tab.appendChild(delDayBtn);
@@ -299,9 +302,9 @@
 
             if (isEditMode) {
                 const addBtn = document.createElement('button');
-                addBtn.className = "flex-shrink-0 w-12 h-12 mt-3 flex items-center justify-center bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl text-gray-300 text-2xl ml-2";
+                addBtn.className = "flex-shrink-0 w-12 h-12 flex items-center justify-center bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl text-gray-300 text-2xl ml-2 active:bg-gray-100 transition-colors";
                 addBtn.innerHTML = "+";
-                addBtn.onclick = () => document.getElementById('add-day-modal').classList.remove('hidden');
+                addBtn.onclick = openAddDayModal;
                 tabsContainer.appendChild(addBtn);
             }
         }
@@ -321,7 +324,7 @@
                     </div>
                     ${isEditMode ? `<button onclick="openEditor(${activeDayIndex})" class="w-10 h-10 flex items-center justify-center bg-black text-white rounded-xl font-bold shadow-lg shadow-black/20 text-xl">+</button>` : ''}
                 </div>
-                <div class="space-y-4" id="events-list"></div>
+                <div class="space-y-4 pb-10" id="events-list"></div>
             `;
             const list = document.getElementById('events-list');
             if (day.events.length === 0) {
@@ -346,6 +349,7 @@
             }
         }
 
+        // --- SortableJS 拖拽逻辑 ---
         function initSortable() {
             const el = document.getElementById('events-list');
             if (sortableInstance) sortableInstance.destroy();
@@ -358,7 +362,7 @@
                     const dayEvents = itinerary[activeDayIndex].events;
                     const movedItem = dayEvents.splice(evt.oldIndex, 1)[0];
                     dayEvents.splice(evt.newIndex, 0, movedItem);
-                    saveToLocal(); // 排序后保存
+                    saveToLocal();
                     renderDayContent();
                 }
             });
@@ -370,6 +374,93 @@
             document.getElementById('reset-btn').classList.toggle('hidden', !isEditMode);
             if (!isEditMode && sortableInstance) { sortableInstance.destroy(); sortableInstance = null; }
             render();
+        }
+
+        // --- 日期处理逻辑：从 Date Picker 解析数据 ---
+        function openAddDayModal() {
+            document.getElementById('new-day-picker').value = '';
+            document.getElementById('new-day-loc').value = '';
+            document.getElementById('add-day-modal').classList.remove('hidden');
+        }
+
+        function closeAddDayModal() {
+            document.getElementById('add-day-modal').classList.add('hidden');
+        }
+
+        function confirmAddDay() {
+            const pickerVal = document.getElementById('new-day-picker').value;
+            const loc = document.getElementById('new-day-loc').value || '未设定';
+            
+            if (!pickerVal) {
+                showToast("请选择日期");
+                return;
+            }
+
+            const dateObj = new Date(pickerVal);
+            const month = dateObj.getMonth() + 1;
+            const dayNum = dateObj.getDate();
+            const weekDays = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
+            const weekStr = weekDays[dateObj.getDay()];
+
+            const newDay = {
+                date: `${month}月${dayNum}日`,
+                short: `${month}.${dayNum}`,
+                day: weekStr,
+                loc: loc,
+                events: []
+            };
+
+            itinerary.push(newDay);
+            // 简单按日期先后排个序
+            itinerary.sort((a, b) => {
+                const dateA = new Date(a.short.split('.').map((v, i) => i === 0 ? `2024-${v}` : v).join('-'));
+                const dateB = new Date(b.short.split('.').map((v, i) => i === 0 ? `2024-${v}` : v).join('-'));
+                return dateA - dateB;
+            });
+
+            saveToLocal();
+            closeAddDayModal();
+            activeDayIndex = itinerary.findIndex(d => d.short === newDay.short);
+            render();
+        }
+
+        // --- 核心增删改逻辑 ---
+        function saveEvent() {
+            const newEv = {
+                time: document.getElementById('in-time').value || '--:--',
+                place: document.getElementById('in-place').value || '未知',
+                task: document.getElementById('in-task').value || '计划',
+                cost: parseInt(document.getElementById('in-cost').value) || 0,
+                cat: document.getElementById('in-cat').value,
+                color: selectedColor
+            };
+            if (activeEditEventIndex !== null) itinerary[activeDayIndex].events[activeEditEventIndex] = newEv;
+            else itinerary[activeDayIndex].events.push(newEv);
+            
+            saveToLocal();
+            closeModal(); 
+            render();
+        }
+
+        function deleteCurrentEvent() { 
+            itinerary[activeDayIndex].events.splice(activeEditEventIndex, 1); 
+            saveToLocal();
+            closeModal(); 
+            render(); 
+        }
+
+        function deleteDay(idx) {
+            if (confirm('确认删除这一整天的行程吗？')) {
+                itinerary.splice(idx, 1);
+                activeDayIndex = Math.max(0, activeDayIndex - 1);
+                saveToLocal();
+                render();
+            }
+        }
+
+        function updateLoc(v) { 
+            itinerary[activeDayIndex].loc = v; 
+            saveToLocal();
         }
 
         // --- 重置逻辑 ---
@@ -384,87 +475,14 @@
                 itinerary = JSON.parse(JSON.stringify(DEFAULT_ITINERARY));
                 phrases = [...DEFAULT_PHRASES];
                 activeDayIndex = 0;
-                saveToLocal(); // 重置后保存
+                saveToLocal();
                 showToast("数据已恢复默认");
                 closeResetModal();
                 render();
             } else { showToast("请输入 ok 确认"); }
         }
 
-        // --- 增删改逻辑 ---
-        function saveEvent() {
-            const newEv = {
-                time: document.getElementById('in-time').value || '--:--',
-                place: document.getElementById('in-place').value || '未知',
-                task: document.getElementById('in-task').value || '计划',
-                cost: parseInt(document.getElementById('in-cost').value) || 0,
-                cat: document.getElementById('in-cat').value,
-                color: selectedColor
-            };
-            if (activeEditEventIndex !== null) itinerary[activeDayIndex].events[activeEditEventIndex] = newEv;
-            else itinerary[activeDayIndex].events.push(newEv);
-            
-            saveToLocal(); // 保存数据
-            closeModal(); 
-            render();
-        }
-
-        function deleteCurrentEvent() { 
-            itinerary[activeDayIndex].events.splice(activeEditEventIndex, 1); 
-            saveToLocal(); // 保存数据
-            closeModal(); 
-            render(); 
-        }
-
-        function deleteDay(idx) {
-            if (confirm('确认删除这一整天的行程吗？')) {
-                itinerary.splice(idx, 1);
-                activeDayIndex = Math.max(0, activeDayIndex - 1);
-                saveToLocal(); // 保存数据
-                render();
-            }
-        }
-
-        function confirmAddDay() {
-            const date = document.getElementById('new-day-date').value;
-            const short = document.getElementById('new-day-short').value;
-            const week = document.getElementById('new-day-week').value;
-            const loc = document.getElementById('new-day-loc').value;
-            if (date && short) {
-                itinerary.push({ date, short, day: week, loc, events: [] });
-                document.getElementById('add-day-modal').classList.add('hidden');
-                activeDayIndex = itinerary.length - 1;
-                saveToLocal(); // 保存数据
-                render();
-            }
-        }
-
-        function updateLoc(v) { 
-            itinerary[activeDayIndex].loc = v; 
-            saveToLocal(); // 实时保存地点修改
-        }
-
-        // --- 常用口语逻辑 ---
-        function addNewPhrase() {
-            const zh = document.getElementById('new-zh').value, jp = document.getElementById('new-jp').value, en = document.getElementById('new-en').value;
-            if (zh && jp) { 
-                phrases.unshift({ zh, jp, en: en || 'USER' }); 
-                document.getElementById('new-zh').value = ''; 
-                document.getElementById('new-jp').value = ''; 
-                document.getElementById('new-en').value = ''; 
-                saveToLocal(); // 保存口语
-                toggleAddPhrase(); 
-                renderPhrases(); 
-            }
-        }
-
-        function deletePhrase(i) { 
-            phrases.splice(i, 1); 
-            saveToLocal(); // 保存口语
-            renderPhrases(); 
-        }
-
-        // --- 辅助 UI 函数 ---
+        // --- 其他工具 ---
         function showToast(msg) {
             const toast = document.getElementById('toast');
             toast.innerText = msg;
@@ -488,7 +506,7 @@
             }));
             document.getElementById('total-cny-only').innerText = '¥ ' + totalCNY.toLocaleString(undefined, {minimumFractionDigits: 2});
             document.getElementById('category-summary-cny').innerHTML = Object.keys(catCNY).map(cat => `
-                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl"><span class="font-bold text-black">${cat}</span><span class="font-black text-blue-600">¥ ${catCNY[cat].toFixed(2)}</span></div>`).join('');
+                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl"><span class="font-bold">${cat}</span><span class="font-black text-blue-600">¥ ${catCNY[cat].toFixed(2)}</span></div>`).join('');
             document.getElementById('dashboard-modal').classList.remove('hidden');
         }
 
@@ -524,6 +542,19 @@
                 phrases.map((p, idx) => `<div class="flex gap-2"><div onclick="showFlashcard('${p.zh}','${p.jp}','${p.en}')" class="flex-1 p-5 bg-gray-50 rounded-2xl flex justify-between items-center btn-active"><div><p class="text-[10px] text-gray-400 font-bold uppercase mb-1 text-left">${p.en}</p><p class="text-lg font-bold text-left">${p.zh}</p></div><div class="text-2xl opacity-10">→</div></div><button onclick="deletePhrase(${idx})" class="w-12 bg-red-50 text-red-500 rounded-2xl font-bold btn-active">🗑️</button></div>`).join('');
         }
         function toggleAddPhrase() { document.getElementById('add-phrase-box').classList.toggle('hidden'); }
+        function addNewPhrase() {
+            const zh = document.getElementById('new-zh').value, jp = document.getElementById('new-jp').value, en = document.getElementById('new-en').value;
+            if (zh && jp) { 
+                phrases.unshift({ zh, jp, en: en || 'USER' }); 
+                document.getElementById('new-zh').value = ''; 
+                document.getElementById('new-jp').value = ''; 
+                document.getElementById('new-en').value = ''; 
+                saveToLocal();
+                toggleAddPhrase(); 
+                renderPhrases(); 
+            }
+        }
+        function deletePhrase(i) { phrases.splice(i, 1); saveToLocal(); renderPhrases(); }
         function showFlashcard(zh, jp, en) { document.getElementById('f-zh').innerText = zh; document.getElementById('f-jp').innerText = jp; document.getElementById('f-en').innerText = en; document.getElementById('flash-modal').classList.remove('hidden'); }
 
         window.onload = render;
