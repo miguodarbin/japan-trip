@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>日本旅行 2026</title>
+    <title>旅行助手2026</title>
     
     <!-- iOS PWA 适配 -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -55,9 +55,10 @@
         .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); }
         .dark .glass { background: rgba(28, 28, 30, 0.8); }
 
+        /* 日期卡片：确保文字绝对垂直居中 */
         .date-tab-btn {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            min-width: 75px; height: 68px; border-radius: 22px; transition: all 0.3s ease; cursor: pointer;
+            min-width: 75px; height: 70px; border-radius: 22px; transition: all 0.3s ease; cursor: pointer;
         }
 
         .tab-active { background: #000; color: #fff; transform: scale(1.05); box-shadow: 0 10px 20px -5px rgba(0,0,0,0.2); }
@@ -70,28 +71,27 @@
         .high-none { background-color: #F9FAFB; border: 1px solid #F3F4F6; }
         .dark .high-none { background-color: #2C2C2E; border: 1px solid #3A3A3C; color: #fff; }
 
-        /* 强化分类 Tag 样式 */
+        /* 行程项 Tag 视觉增强 */
         .category-tag {
             font-size: 10px;
             font-weight: 800;
-            padding: 5px 12px;
+            padding: 5px 14px;
             border-radius: 10px;
-            background: #000;
+            background: #111;
             color: #fff;
             display: inline-block;
-            margin-top: 8px;
-            letter-spacing: 0.05em;
+            margin-top: 10px;
+            letter-spacing: 0.02em;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        .dark .category-tag {
-            background: #fff;
-            color: #000;
-        }
+        .dark .category-tag { background: #eee; color: #000; }
 
         .sortable-ghost { opacity: 0.3; transform: scale(0.95); }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         
         input[type="date"], input[type="time"] { cursor: pointer; min-height: 1.5em; width: 100%; background: transparent; color: inherit; border: none; outline: none; }
-        input[type="checkbox"] { width: 22px; height: 22px; border-radius: 6px; cursor: pointer; accent-color: #3b82f6; }
+        input[type="checkbox"] { width: 24px; height: 24px; border-radius: 8px; cursor: pointer; accent-color: #000; }
+        .dark input[type="checkbox"] { accent-color: #fff; }
 
         #img-viewer { background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); }
         .fab { box-shadow: 0 8px 32px rgba(0,0,0,0.15); }
@@ -99,25 +99,25 @@
 </head>
 <body class="selection:bg-yellow-200 text-black dark:text-white">
 
-    <!-- 导航栏 -->
+    <!-- Header -->
     <header class="fixed top-0 left-0 right-0 z-40 glass border-b border-gray-100 dark:border-zinc-800 px-4 flex items-center justify-between" 
             style="padding-top: env(safe-area-inset-top, 0px); height: calc(4.5rem + env(safe-area-inset-top, 0px));">
         <div class="flex items-center space-x-4 overflow-x-auto no-scrollbar">
-            <button onclick="openCalc()" class="text-[11px] font-bold text-gray-400 dark:text-zinc-500">汇率</button>
-            <button onclick="openDashboard()" class="text-[11px] font-bold text-gray-400 dark:text-zinc-500">开销</button>
-            <button onclick="openMemoryStats()" class="text-[11px] font-bold text-blue-400">内存</button>
-            <button onclick="exportConfig()" class="text-[11px] font-bold text-gray-400 dark:text-zinc-500">导出</button>
-            <button onclick="document.getElementById('import-input').click()" class="text-[11px] font-bold text-gray-400 dark:text-zinc-500">导入</button>
+            <button onclick="openCalc()" class="text-[11px] font-bold text-gray-400 dark:text-zinc-500 flex-shrink-0">汇率</button>
+            <button onclick="openDashboard()" class="text-[11px] font-bold text-gray-400 dark:text-zinc-500 flex-shrink-0">开销</button>
+            <button onclick="openMemoryStats()" class="text-[11px] font-bold text-blue-400 flex-shrink-0">内存</button>
+            <button onclick="exportConfig()" class="text-[11px] font-bold text-gray-400 dark:text-zinc-500 flex-shrink-0">导出</button>
+            <button onclick="document.getElementById('import-input').click()" class="text-[11px] font-bold text-gray-400 dark:text-zinc-500 flex-shrink-0">导入</button>
             <input type="file" id="import-input" class="hidden" accept=".json" onchange="importConfig(this)">
         </div>
         <div class="flex items-center space-x-2">
             <button onclick="toggleDarkMode()" id="dark-mode-toggle" class="text-[11px] font-bold px-3 py-1.5 rounded-full border border-gray-200 dark:border-zinc-700 transition-all text-gray-400">暗色</button>
             <button id="reset-btn" onclick="openResetModal()" class="hidden text-[10px] font-bold px-3 py-1.5 rounded-full border border-red-500 text-red-500">重置</button>
-            <button onclick="toggleEditMode()" id="edit-mode-btn" class="text-[11px] font-bold px-4 py-2 rounded-full border border-black dark:border-white transition-all text-black dark:text-white text-black dark:text-white">进入编辑</button>
+            <button onclick="toggleEditMode()" id="edit-mode-btn" class="text-[11px] font-bold px-4 py-2 rounded-full border border-black dark:border-white transition-all">进入编辑</button>
         </div>
     </header>
 
-    <!-- 主视图 -->
+    <!-- Main Content -->
     <main class="px-6" id="app" style="padding-top: calc(5rem + env(safe-area-inset-top, 0px));">
         <div class="sticky z-30 -mx-6 bg-white dark:bg-black transition-colors" style="top: calc(4.5rem + env(safe-area-inset-top, 0px));">
             <div id="date-tabs" class="flex gap-4 overflow-x-auto no-scrollbar items-center py-10 px-6"></div>
@@ -125,7 +125,7 @@
         <div id="day-content" class="mt-2"></div>
     </main>
 
-    <!-- 悬浮按钮 -->
+    <!-- FABs -->
     <div id="fab-container" class="fixed bottom-10 right-6 z-40 flex flex-col space-y-4 items-center">
         <button onclick="openPurchasesModal()" class="fab w-14 h-14 bg-white dark:bg-zinc-800 rounded-full flex items-center justify-center text-2xl btn-active">🛍️</button>
         <button onclick="openQuickLogModal()" class="fab w-16 h-16 bg-black dark:bg-white rounded-full flex items-center justify-center btn-active">
@@ -133,7 +133,8 @@
         </button>
     </div>
 
-    <!-- 1. 开销看板 -->
+    <!-- Modals -->
+    <!-- 1. 财务看板 -->
     <div id="dashboard-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-6 text-black dark:text-white">
         <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeDashboard()"></div>
         <div class="relative w-full max-w-sm bg-white dark:bg-zinc-900 rounded-[3rem] p-8 modal-enter shadow-2xl overflow-y-auto max-h-[85vh]">
@@ -152,7 +153,7 @@
                     <span class="font-bold text-sm">总预算</span>
                     <input type="number" id="global-budget-input" onchange="updateGlobalBudget(this.value)" class="w-24 bg-white dark:bg-zinc-900 px-2 py-1 rounded-lg font-black text-right outline-none">
                 </div>
-                <div class="w-full h-3 bg-gray-200 dark:bg-zinc-700 rounded-full overflow-hidden text-black dark:text-white"><div id="budget-progress-bar" class="h-full bg-green-500 transition-all"></div></div>
+                <div class="w-full h-3 bg-gray-200 dark:bg-zinc-700 rounded-full overflow-hidden"><div id="budget-progress-bar" class="h-full bg-green-500 transition-all"></div></div>
                 <p id="budget-remaining-display" class="text-lg font-black mt-3 text-green-500">¥0.00</p>
             </div>
 
@@ -160,7 +161,7 @@
                 <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">分类管理 (删除项归入“其它”)</p>
                 <div id="cat-breakdown" class="space-y-3"></div>
                 <div class="flex gap-2">
-                    <input id="new-cat-input" type="text" placeholder="新分类" class="flex-1 bg-gray-50 dark:bg-zinc-800 p-3 rounded-xl text-xs font-bold outline-none border dark:border-zinc-700 text-black dark:text-white text-black dark:text-white">
+                    <input id="new-cat-input" type="text" placeholder="新分类" class="flex-1 bg-gray-50 dark:bg-zinc-800 p-3 rounded-xl text-xs font-bold outline-none border dark:border-zinc-700">
                     <button onclick="addCustomCategory()" class="bg-black dark:bg-white text-white dark:text-black px-4 rounded-xl text-[10px] font-bold">添加</button>
                 </div>
             </div>
@@ -171,121 +172,130 @@
     <div id="purchases-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-6 text-black dark:text-white">
         <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="this.closest('#purchases-modal').classList.add('hidden')"></div>
         <div class="relative w-full max-w-sm bg-white dark:bg-zinc-900 rounded-[3rem] p-8 modal-enter shadow-2xl overflow-y-auto max-h-[85vh]">
-            <div class="flex justify-between items-center mb-6">
+            <div class="flex justify-between items-center mb-6 text-black dark:text-white">
                 <h3 class="text-2xl font-bold italic">购物清单</h3>
                 <button onclick="this.closest('#purchases-modal').classList.add('hidden')" class="text-gray-400 font-bold text-sm">关闭</button>
             </div>
-            <div id="purchases-list" class="space-y-4 text-black dark:text-white text-black dark:text-white"></div>
+            <div id="purchases-list" class="space-y-4"></div>
         </div>
     </div>
 
     <!-- 3. 记一笔开销 -->
-    <div id="quick-log-modal" class="hidden fixed inset-0 z-50 flex items-end text-black dark:text-white text-black dark:text-white text-black dark:text-white">
+    <div id="quick-log-modal" class="hidden fixed inset-0 z-50 flex items-end text-black dark:text-white">
         <div class="absolute inset-0 bg-black/40" onclick="closeQuickLogModal()"></div>
-        <div class="relative w-full bg-white dark:bg-zinc-900 rounded-t-[40px] p-8 modal-enter max-h-[95vh] overflow-y-auto pb-12 text-black dark:text-white text-black dark:text-white">
+        <div class="relative w-full bg-white dark:bg-zinc-900 rounded-t-[40px] p-8 modal-enter max-h-[95vh] overflow-y-auto pb-12">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-2xl font-bold italic">记一笔</h3>
                 <button onclick="closeQuickLogModal()" class="text-gray-400 font-bold text-sm">取消</button>
             </div>
-            <div class="space-y-4 text-black dark:text-white text-black dark:text-white">
-                <input id="quick-task" type="text" placeholder="买了什么项目？" class="w-full p-5 bg-gray-50 dark:bg-zinc-800 rounded-2xl font-bold outline-none text-black dark:text-white text-black dark:text-white text-black dark:text-white">
+            <div class="space-y-4">
+                <input id="quick-task" type="text" placeholder="买了什么？" class="w-full p-5 bg-gray-50 dark:bg-zinc-800 rounded-2xl font-bold outline-none text-black dark:text-white">
                 <div class="space-y-4">
-                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">实时汇率换算</p>
-                    <div class="grid grid-cols-2 gap-3">
+                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1 text-black dark:text-white">实时汇率换算 (100: <span id="quick-rate-label">4.8</span>)</p>
+                    <div class="grid grid-cols-2 gap-3 text-black dark:text-white">
                         <div class="bg-gray-100 dark:bg-zinc-700 p-4 rounded-2xl">
                             <p class="text-[10px] font-bold text-gray-400 mb-1 uppercase">JP¥ 日元</p>
-                            <input id="quick-jpy-cost" type="number" oninput="syncQuickCosts('jpy')" class="w-full bg-transparent font-bold outline-none text-lg text-black dark:text-white">
+                            <input id="quick-jpy-cost" type="number" placeholder="0" oninput="syncQuickCosts('jpy')" class="w-full bg-transparent font-bold outline-none text-lg">
                         </div>
                         <div class="bg-gray-50 dark:bg-zinc-800 p-4 rounded-2xl border dark:border-zinc-700">
                             <p class="text-[10px] font-bold text-gray-400 mb-1 uppercase text-black dark:text-white">CN¥ 人民币</p>
-                            <input id="quick-cost" type="number" oninput="syncQuickCosts('cny')" class="w-full bg-transparent font-bold outline-none text-lg text-black dark:text-white">
+                            <input id="quick-cost" type="number" placeholder="0" oninput="syncQuickCosts('cny')" class="w-full bg-transparent font-bold outline-none text-lg">
                         </div>
                     </div>
-                    <select id="quick-cat" class="w-full bg-gray-50 dark:bg-zinc-800 p-4 rounded-2xl font-bold outline-none text-black dark:text-white text-black dark:text-white"></select>
+                    <select id="quick-cat" class="w-full bg-gray-50 dark:bg-zinc-800 p-4 rounded-2xl font-bold outline-none text-black dark:text-white"></select>
                 </div>
                 <button onclick="saveQuickLog()" class="w-full py-5 bg-black dark:bg-white text-white dark:text-black rounded-3xl font-black text-lg shadow-xl mt-4">确认入账</button>
             </div>
         </div>
     </div>
 
-    <!-- 4. 编辑/新增详情 (Trip & Todo) -->
-    <div id="edit-modal" class="hidden fixed inset-0 z-50 flex items-end text-black dark:text-white text-black dark:text-white">
+    <!-- 4. 编辑弹窗 -->
+    <div id="edit-modal" class="hidden fixed inset-0 z-50 flex items-end text-black dark:text-white">
         <div class="absolute inset-0 bg-black/40" onclick="closeModal()"></div>
         <div class="relative w-full bg-white dark:bg-zinc-900 rounded-t-[40px] p-8 modal-enter max-h-[95vh] overflow-y-auto pb-12">
             <div class="flex justify-between items-center mb-6">
-                <h3 id="edit-modal-title" class="text-2xl font-bold italic">项目编辑</h3>
+                <h3 id="edit-modal-title" class="text-2xl font-bold italic">项目详情</h3>
                 <button onclick="closeModal()" class="text-gray-400 font-bold text-sm">关闭</button>
             </div>
             <div class="space-y-4">
-                <div class="grid grid-cols-2 gap-3 text-black dark:text-white">
+                <div class="grid grid-cols-2 gap-3">
                     <div class="p-4 bg-gray-50 dark:bg-zinc-800 rounded-2xl text-black dark:text-white"><p class="text-[10px] font-bold text-gray-400 mb-1 uppercase">时间</p><input id="in-time" type="time" class="w-full bg-transparent font-bold outline-none"></div>
-                    <div class="p-4 bg-gray-50 dark:bg-zinc-800 rounded-2xl text-black dark:text-white"><p class="text-[10px] font-bold text-gray-400 mb-1 uppercase text-black dark:text-white text-black dark:text-white">地点</p><input id="in-place" type="text" placeholder="选填" class="w-full bg-transparent font-bold outline-none"></div>
+                    <div class="p-4 bg-gray-50 dark:bg-zinc-800 rounded-2xl text-black dark:text-white"><p class="text-[10px] font-bold text-gray-400 mb-1 uppercase">地点</p><input id="in-place" type="text" placeholder="选填" class="w-full bg-transparent font-bold outline-none text-black dark:text-white"></div>
                 </div>
 
-                <div id="view-trip-only" class="space-y-4 text-black dark:text-white">
+                <div id="view-trip-only" class="space-y-4">
                     <textarea id="in-task" placeholder="详细行程内容..." class="w-full p-5 bg-gray-50 dark:bg-zinc-800 rounded-2xl font-bold outline-none min-h-[100px] resize-none text-black dark:text-white"></textarea>
-                    <div class="flex gap-3">
-                        <div class="flex-1 bg-gray-50 dark:bg-zinc-800 p-4 rounded-2xl flex items-center text-black dark:text-white"><span class="mr-2 text-gray-400 font-black">CN¥</span><input id="in-cost" type="number" placeholder="金额" class="w-full bg-transparent font-bold outline-none text-lg"></div>
+                    <div class="flex gap-3 text-black dark:text-white">
+                        <div class="flex-1 bg-gray-50 dark:bg-zinc-800 p-4 rounded-2xl flex items-center"><span class="mr-2 text-gray-400 font-black text-black dark:text-white">CN¥</span><input id="in-cost" type="number" placeholder="金额" class="w-full bg-transparent font-bold outline-none text-lg"></div>
                         <select id="in-cat" class="bg-gray-50 dark:bg-zinc-800 p-4 rounded-2xl font-bold outline-none text-black dark:text-white"></select>
                     </div>
                 </div>
 
-                <div id="view-todo-only" class="hidden space-y-4 text-black dark:text-white text-black dark:text-white">
-                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1 text-black dark:text-white">待办详情</p>
-                    <div id="todo-items-editor" class="space-y-2 text-black dark:text-white"></div>
-                    <button onclick="addTodoRow()" class="w-full py-3 border-2 border-dashed border-gray-200 dark:border-zinc-700 rounded-xl font-bold text-gray-400 text-xs">增加子项</button>
+                <div id="view-todo-only" class="hidden space-y-4">
+                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">待办项目</p>
+                    <div id="todo-items-editor" class="space-y-2"></div>
+                    <button onclick="addTodoRow()" class="w-full py-3 border-2 border-dashed border-gray-200 dark:border-zinc-700 rounded-xl font-bold text-gray-400 text-xs text-black dark:text-white">增加一条</button>
                 </div>
 
-                <div id="view-image-area" class="p-4 bg-gray-50 dark:bg-zinc-800 rounded-2xl flex items-center justify-between text-black dark:text-white text-black dark:text-white">
-                    <div id="img-preview-box" class="w-12 h-12 bg-gray-200 dark:bg-zinc-700 rounded-lg overflow-hidden flex items-center justify-center text-black dark:text-white">🖼️</div>
-                    <button onclick="document.getElementById('img-input').click()" class="px-4 py-2 bg-white dark:bg-zinc-700 rounded-xl text-[11px] font-bold border dark:border-zinc-600 text-black dark:text-white text-black dark:text-white">上传图片</button>
+                <div id="view-image-area" class="p-4 bg-gray-50 dark:bg-zinc-800 rounded-2xl flex items-center justify-between text-black dark:text-white">
+                    <div id="img-preview-box" class="w-12 h-12 bg-gray-200 dark:bg-zinc-700 rounded-lg overflow-hidden flex items-center justify-center">🖼️</div>
+                    <span id="img-status-text" class="text-xs font-bold text-gray-400">无图</span>
+                    <div class="flex space-x-2">
+                        <button onclick="document.getElementById('img-input').click()" class="px-4 py-2 bg-white dark:bg-zinc-700 rounded-xl text-[11px] font-bold border dark:border-zinc-600">上传</button>
+                        <button id="del-img-btn" onclick="clearSelectedImg()" class="hidden px-4 py-2 bg-red-50 text-red-500 rounded-xl text-[10px] font-bold">删除</button>
+                    </div>
                     <input type="file" id="img-input" accept="image/*" class="hidden" onchange="handleImageUpload(this)">
                 </div>
 
-                <div class="flex gap-4 justify-between pt-2"><button onclick="selectColor('none')" id="col-none" class="w-10 h-10 rounded-full border-2 border-gray-100 bg-white dark:border-zinc-700"></button><button onclick="selectColor('yellow')" id="col-yellow" class="w-10 h-10 rounded-full bg-[#FACC15]"></button><button onclick="selectColor('red')" id="col-red" class="w-10 h-10 rounded-full bg-[#FB7185]"></button><button onclick="selectColor('blue')" id="col-blue" class="w-10 h-10 rounded-full bg-[#60A5FA]"></button><button onclick="selectColor('green')" id="col-green" class="w-10 h-10 rounded-full bg-[#4ADE80]"></button></div>
+                <div class="flex gap-4 justify-between pt-2">
+                    <button onclick="selectColor('none')" id="col-none" class="w-10 h-10 rounded-full border-2 border-gray-100 bg-white dark:border-zinc-700"></button>
+                    <button onclick="selectColor('yellow')" id="col-yellow" class="w-10 h-10 rounded-full bg-[#FACC15]"></button>
+                    <button onclick="selectColor('red')" id="col-red" class="w-10 h-10 rounded-full bg-[#FB7185]"></button>
+                    <button onclick="selectColor('blue')" id="col-blue" class="w-10 h-10 rounded-full bg-[#60A5FA]"></button>
+                    <button onclick="selectColor('green')" id="col-green" class="w-10 h-10 rounded-full bg-[#4ADE80]"></button>
+                </div>
             </div>
             
-            <!-- 修复：按钮区域 mt-12 增加间距 -->
             <div class="flex gap-3 mt-12">
-                <button onclick="deleteCurrentEvent()" id="del-btn" class="flex-1 py-4 bg-red-50 text-red-600 rounded-2xl font-bold hidden text-black dark:text-white text-black dark:text-white">删除</button>
-                <button onclick="saveEvent()" class="flex-[2] py-4 bg-black dark:bg-white text-white dark:text-black rounded-2xl font-bold shadow-xl">保存更改</button>
+                <button onclick="deleteCurrentEvent()" id="del-btn" class="flex-1 py-4 bg-red-50 text-red-600 rounded-2xl font-bold hidden">删除</button>
+                <button onclick="saveEvent()" class="flex-[2] py-4 bg-black dark:bg-white text-white dark:text-black rounded-2xl font-bold shadow-xl">保存项目</button>
             </div>
         </div>
     </div>
 
-    <!-- 汇率换算弹窗 -->
+    <!-- 5. 汇率换算器 -->
     <div id="calc-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-6 text-black dark:text-white">
         <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeCalc()"></div>
-        <div class="relative w-full max-w-sm bg-white dark:bg-zinc-900 rounded-[3rem] p-8 modal-enter shadow-2xl text-black dark:text-white text-black dark:text-white">
+        <div class="relative w-full max-w-sm bg-white dark:bg-zinc-900 rounded-[3rem] p-8 modal-enter shadow-2xl">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-bold">汇率换算</h3>
-                <button onclick="closeCalc()" class="text-gray-400 font-bold text-sm">关闭</button>
+                <h3 class="text-2xl font-bold text-black dark:text-white">汇率换算</h3>
+                <button onclick="closeCalc()" class="text-gray-400 font-bold text-sm text-black dark:text-white">关闭</button>
             </div>
-            <div class="mb-8 p-5 bg-blue-50 dark:bg-blue-900/20 rounded-[2rem] border border-blue-100 dark:border-blue-900/30 text-black dark:text-white text-black dark:text-white">
+            <div class="mb-8 p-5 bg-blue-50 dark:bg-blue-900/20 rounded-[2rem] border border-blue-100 dark:border-blue-900/30 text-black dark:text-white">
                 <p class="text-[10px] font-black text-blue-500 uppercase mb-3 tracking-widest text-left">基准汇率 (100 JPY ≈ CNY)</p>
                 <input id="base-rate-input" type="number" step="0.01" onchange="updateBaseRate(this.value)" class="w-full bg-transparent text-2xl font-black outline-none text-blue-600 dark:text-blue-400">
             </div>
-            <div class="space-y-4 text-black dark:text-white text-black dark:text-white">
-                <div class="p-4 bg-gray-50 dark:bg-zinc-800 rounded-2xl text-black dark:text-white"><p class="text-[10px] font-bold text-gray-400 mb-1 uppercase">日元 JPY</p><input id="calc-jpy" type="number" oninput="convert('jpy')" class="w-full bg-transparent text-3xl font-bold outline-none text-black dark:text-white"></div>
-                <div class="p-4 bg-gray-50 dark:bg-zinc-800 rounded-2xl text-black dark:text-white text-black dark:text-white"><p class="text-[10px] font-bold text-gray-400 mb-1 uppercase">人民币 CNY</p><input id="calc-cny" type="number" oninput="convert('cny')" class="w-full bg-transparent text-3xl font-bold outline-none text-blue-600 dark:text-blue-400"></div>
+            <div class="space-y-4">
+                <div class="p-4 bg-gray-50 dark:bg-zinc-800 rounded-2xl text-black dark:text-white"><p class="text-[10px] font-bold text-gray-400 mb-1 uppercase">日元 JPY</p><input id="calc-jpy" type="number" oninput="convert('jpy')" class="w-full bg-transparent text-3xl font-bold outline-none"></div>
+                <div class="p-4 bg-gray-50 dark:bg-zinc-800 rounded-2xl text-black dark:text-white"><p class="text-[10px] font-bold text-gray-400 mb-1 uppercase text-black dark:text-white">人民币 CNY</p><input id="calc-cny" type="number" oninput="convert('cny')" class="w-full bg-transparent text-3xl font-bold outline-none text-blue-600 dark:text-blue-400"></div>
             </div>
         </div>
     </div>
 
-    <!-- 固件（内存/重置/日期新增/全图） 略... -->
-    <div id="memory-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-6 text-black dark:text-white text-black dark:text-white"><div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeMemoryStats()"></div><div class="relative w-full max-w-sm bg-white dark:bg-zinc-900 rounded-[3rem] p-8 modal-enter shadow-2xl text-center text-black dark:text-white"><div class="flex justify-between items-center mb-6 text-black dark:text-white text-black dark:text-white"><h3 class="text-2xl font-bold">存储空间</h3><button onclick="closeMemoryStats()" class="text-gray-400 font-bold text-sm">关闭</button></div><div class="p-8 bg-gray-50 dark:bg-zinc-800 rounded-[2.5rem]"><p id="memory-used" class="text-4xl font-black mb-4">0 MB</p><div class="w-full h-3 bg-gray-200 dark:bg-zinc-700 rounded-full overflow-hidden text-black dark:text-white"><div id="memory-bar" class="h-full bg-blue-500 transition-all text-black dark:text-white"></div></div><p class="text-[10px] text-gray-400 mt-4 font-medium uppercase tracking-widest text-black dark:text-white">Cap: 5.00 MB</p></div></div></div>
+    <!-- 固件 -->
+    <div id="memory-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-6 text-black dark:text-white"><div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeMemoryStats()"></div><div class="relative w-full max-w-sm bg-white dark:bg-zinc-900 rounded-[3rem] p-8 modal-enter shadow-2xl text-center text-black dark:text-white"><div class="flex justify-between items-center mb-6 text-black dark:text-white text-black dark:text-white"><h3 class="text-2xl font-bold">内存状态</h3><button onclick="closeMemoryStats()" class="text-gray-400 font-bold text-sm text-black dark:text-white">关闭</button></div><div class="p-8 bg-gray-50 dark:bg-zinc-800 rounded-[2.5rem]"><p id="memory-used" class="text-4xl font-black mb-4">0 MB</p><div class="w-full h-3 bg-gray-200 dark:bg-zinc-700 rounded-full overflow-hidden"><div id="memory-bar" class="h-full bg-blue-500 transition-all"></div></div><p class="text-[10px] text-gray-400 mt-4 font-medium uppercase tracking-widest">Cap: 5.00 MB</p></div></div></div>
     <div id="img-viewer" class="hidden fixed inset-0 z-[200] flex items-center justify-center p-4 text-black dark:text-white" onclick="this.classList.add('hidden')"><img id="viewer-content" src="" class="max-w-full max-h-full rounded-2xl shadow-2xl text-black dark:text-white"></div>
-    <div id="reset-confirm-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-6 text-black dark:text-white text-black dark:text-white"><div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeResetModal()"></div><div class="relative w-full max-w-sm bg-white dark:bg-zinc-900 rounded-[3rem] p-8 modal-enter shadow-2xl text-center text-black dark:text-white"><h3 class="text-2xl font-bold mb-4 text-red-500">重置确认</h3><p class="text-gray-500 text-sm mb-6 leading-relaxed text-black dark:text-white">确认请输入 ok：</p><input id="reset-verify-input" type="text" placeholder="ok" class="w-full p-4 bg-gray-50 dark:bg-zinc-800 rounded-2xl font-bold outline-none mb-6 border-2 border-transparent focus:border-red-500 text-center uppercase text-black dark:text-white text-black dark:text-white"><div class="flex gap-3 text-black dark:text-white"><button onclick="closeResetModal()" class="flex-1 py-4 bg-gray-100 dark:bg-zinc-700 text-gray-500 rounded-2xl font-bold">取消</button><button onclick="executeReset()" class="flex-1 py-4 bg-red-50 text-white rounded-2xl font-bold shadow-lg">确认</button></div></div></div>
-    <div id="add-day-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-6 text-black dark:text-white text-black dark:text-white">
+    <div id="reset-confirm-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-6 text-black dark:text-white"><div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeResetModal()"></div><div class="relative w-full max-w-sm bg-white dark:bg-zinc-900 rounded-[3rem] p-8 modal-enter shadow-2xl text-center text-black dark:text-white"><h3 class="text-2xl font-bold mb-4 text-red-500">重置确认</h3><p class="text-gray-500 text-sm mb-6 leading-relaxed">确认请输入 ok：</p><input id="reset-verify-input" type="text" placeholder="ok" class="w-full p-4 bg-gray-50 dark:bg-zinc-800 rounded-2xl font-bold outline-none mb-6 border-2 border-transparent focus:border-red-500 text-center uppercase text-black dark:text-white"><div class="flex gap-3 text-black dark:text-white"><button onclick="closeResetModal()" class="flex-1 py-4 bg-gray-100 dark:bg-zinc-700 text-gray-500 rounded-2xl font-bold text-black dark:text-white">取消</button><button onclick="executeReset()" class="flex-1 py-4 bg-red-50 text-white rounded-2xl font-bold shadow-lg">确认</button></div></div></div>
+    <div id="add-day-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-6 text-black dark:text-white">
         <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeAddDayModal()"></div>
-        <div class="relative w-full max-w-sm bg-white dark:bg-zinc-900 rounded-[3rem] p-8 modal-enter shadow-2xl">
-            <div class="flex justify-between items-center mb-6 text-black dark:text-white text-black dark:text-white">
+        <div class="relative w-full max-w-sm bg-white dark:bg-zinc-900 rounded-[3rem] p-8 modal-enter shadow-2xl text-black dark:text-white">
+            <div class="flex justify-between items-center mb-6">
                 <h3 class="text-2xl font-bold italic">新增日期</h3>
-                <button onclick="closeAddDayModal()" class="text-gray-400 font-bold text-sm">关闭</button>
+                <button onclick="closeAddDayModal()" class="text-gray-400 font-bold text-sm text-black dark:text-white">关闭</button>
             </div>
             <div class="space-y-4">
-                <div class="p-4 bg-gray-50 dark:bg-zinc-800 rounded-2xl text-black dark:text-white text-black dark:text-white"><p class="text-[10px] font-bold text-gray-400 mb-1 uppercase">日期</p><input id="new-day-picker" type="date" class="w-full bg-transparent font-bold outline-none"></div>
-                <div class="p-4 bg-gray-50 dark:bg-zinc-800 rounded-2xl text-black dark:text-white text-black dark:text-white"><p class="text-[10px] font-bold text-gray-400 mb-1 uppercase">流程</p><input id="new-day-loc" type="text" placeholder="无" class="w-full bg-transparent font-bold outline-none"></div>
+                <div class="p-4 bg-gray-50 dark:bg-zinc-800 rounded-2xl text-black dark:text-white"><p class="text-[10px] font-bold text-gray-400 mb-1 uppercase">日期</p><input id="new-day-picker" type="date" class="w-full bg-transparent font-bold outline-none"></div>
+                <div class="p-4 bg-gray-50 dark:bg-zinc-800 rounded-2xl text-black dark:text-white"><p class="text-[10px] font-bold text-gray-400 mb-1 uppercase">流程</p><input id="new-day-loc" type="text" placeholder="无" class="w-full bg-transparent font-bold outline-none"></div>
             </div>
             <button onclick="confirmAddDay()" class="w-full mt-8 py-4 bg-black dark:bg-white text-white dark:text-black rounded-2xl font-bold btn-active">确认添加</button>
         </div>
@@ -294,14 +304,13 @@
     <div id="toast" class="hidden fixed bottom-10 left-1/2 -translate-x-1/2 z-[110] bg-black/90 text-white px-8 py-3 rounded-full text-xs font-bold shadow-2xl">操作成功</div>
 
     <script>
-        // --- 模型与存储 ---
-        const STORAGE_KEY_ITINERARY = 'japan_2024_itinerary_v18_final'; 
-        const STORAGE_KEY_CONFIG = 'japan_2024_config_v18_final';
-        const DEFAULT_ITINERARY = [{ date: '4月17日', short: '4.17', day: '周三', loc: '无', events: [] }];
+        // --- 存储模型 ---
+        const STORAGE_KEY_ITINERARY = 'japan_2024_itinerary_v20'; 
+        const STORAGE_KEY_CONFIG = 'japan_2024_config_v20';
         const BASE_CATEGORIES = ["🍱 餐饮", "🚄 交通", "🏨 酒店", "🛍️ 购物", "🎫 门票", "其它"];
 
         // --- 状态初始化 ---
-        let itinerary = JSON.parse(localStorage.getItem(STORAGE_KEY_ITINERARY)) || JSON.parse(JSON.stringify(DEFAULT_ITINERARY));
+        let itinerary = JSON.parse(localStorage.getItem(STORAGE_KEY_ITINERARY)) || [];
         let config = JSON.parse(localStorage.getItem(STORAGE_KEY_CONFIG)) || { budget: 0, darkMode: false, rate: 0.048, customCategories: [], quickPurchases: [] };
         
         let isDarkMode = config.darkMode;
@@ -313,19 +322,23 @@
         let selectedImageBase64 = null;
         let sortableInstance = null;
 
-        // --- 核心工具函数 ---
+        // --- 工具函数 ---
         function getAllCategories() { return [...BASE_CATEGORIES, ...config.customCategories]; }
 
         function refreshCategorySelects() {
             const cats = getAllCategories(); 
             const html = cats.map(c => `<option value="${c}">${c}</option>`).join('');
-            ['quick-cat', 'in-cat'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.innerHTML = html;
-            });
+            const qc = document.getElementById('quick-cat'); if (qc) qc.innerHTML = html;
+            const ic = document.getElementById('in-cat'); if (ic) ic.innerHTML = html;
         }
 
-        function saveToLocal() { try { localStorage.setItem(STORAGE_KEY_ITINERARY, JSON.stringify(itinerary)); config.darkMode = isDarkMode; localStorage.setItem(STORAGE_KEY_CONFIG, JSON.stringify(config)); } catch (e) { showToast("空间不足！"); } }
+        function saveToLocal() { 
+            try { 
+                localStorage.setItem(STORAGE_KEY_ITINERARY, JSON.stringify(itinerary)); 
+                config.darkMode = isDarkMode; 
+                localStorage.setItem(STORAGE_KEY_CONFIG, JSON.stringify(config)); 
+            } catch (e) { showToast("存储溢出！"); } 
+        }
 
         function applyTheme() { document.documentElement.classList.toggle('dark', isDarkMode); const d = document.getElementById('dark-mode-toggle'); if(d) d.innerText = isDarkMode ? '亮色' : '暗色'; }
         function toggleDarkMode() { isDarkMode = !isDarkMode; applyTheme(); saveToLocal(); }
@@ -334,7 +347,7 @@
         // --- 分类管理 ---
         window.removeCustomCategory = function(catName, event) {
             if (event) event.stopPropagation();
-            if(confirm(`确定删除“${catName}”分类吗？相关项目将归入“其它”。`)) {
+            if(confirm(`确定删除“${catName}”吗？关联项目将归入“其它”。`)) {
                 itinerary.forEach(day => day.events.forEach(ev => { if (ev.cat === catName) ev.cat = "其它"; }));
                 if (config.quickPurchases) config.quickPurchases.forEach(p => { if (p.cat === catName) p.cat = "其它"; });
                 config.customCategories = config.customCategories.filter(c => c !== catName);
@@ -363,15 +376,20 @@
             const rd = document.getElementById('budget-remaining-display'); if(rd) { rd.innerText = '余 ¥' + rem.toFixed(2); rd.className = `text-lg font-black mt-3 ${rem < 0 ? 'text-red-500' : 'text-green-500'}`; }
             document.getElementById('cat-breakdown').innerHTML = getAllCategories().map(k => {
                 const isCustom = config.customCategories.includes(k);
-                const safeName = k.replace(/'/g, "\\'");
-                return `<div class="flex justify-between items-center px-4 py-3 bg-gray-50 dark:bg-zinc-800 rounded-2xl text-xs font-bold text-black dark:text-white"><div class="flex items-center gap-2"><span>${k}</span>${isCustom ? `<button type="button" onclick="window.removeCustomCategory('${safeName}', event)" class="text-red-500 opacity-60 hover:opacity-100 ml-1 text-xl leading-none">×</button>` : ''}</div><span>¥${(catS[k] || 0).toFixed(2)}</span></div>`;
+                const sn = k.replace(/'/g, "\\'");
+                return `<div class="flex justify-between items-center px-4 py-3 bg-gray-50 dark:bg-zinc-800 rounded-2xl text-xs font-bold text-black dark:text-white"><div class="flex items-center gap-2"><span>${k}</span>${isCustom ? `<button type="button" onclick="window.removeCustomCategory('${sn}', event)" class="text-red-500 opacity-60 hover:opacity-100 ml-1 text-xl leading-none">×</button>` : ''}</div><span>¥${(catS[k] || 0).toFixed(2)}</span></div>`;
             }).join('');
             document.getElementById('dashboard-modal').classList.remove('hidden');
         }
 
         // --- 记一笔 & 购物清单 ---
         function syncQuickCosts(source) { const j = document.getElementById('quick-jpy-cost'), c = document.getElementById('quick-cost'); if (source === 'jpy') c.value = j.value ? (parseFloat(j.value) * config.rate).toFixed(2) : ''; else if (source === 'cny') j.value = c.value ? (parseFloat(c.value) / config.rate).toFixed(0) : ''; }
-        function openQuickLogModal() { document.getElementById('quick-task').value = ''; document.getElementById('quick-cost').value = ''; document.getElementById('quick-jpy-cost').value = ''; const rl = document.getElementById('quick-rate-label'); if(rl) rl.innerText = (config.rate * 100).toFixed(2); refreshCategorySelects(); document.getElementById('quick-log-modal').classList.remove('hidden'); }
+        function openQuickLogModal() {
+            if (itinerary.length === 0) return showToast("请先在编辑模式添加日期");
+            document.getElementById('quick-task').value = ''; document.getElementById('quick-cost').value = ''; document.getElementById('quick-jpy-cost').value = '';
+            const rl = document.getElementById('quick-rate-label'); if(rl) rl.innerText = (config.rate * 100).toFixed(2);
+            refreshCategorySelects(); document.getElementById('quick-log-modal').classList.remove('hidden');
+        }
         function closeQuickLogModal() { document.getElementById('quick-log-modal').classList.add('hidden'); }
         function saveQuickLog() {
             const t = document.getElementById('quick-task').value.trim() || '随手记'; const c = parseFloat(document.getElementById('quick-cost').value) || 0;
@@ -382,24 +400,47 @@
         }
         function openPurchasesModal() {
             const list = document.getElementById('purchases-list'); const qp = config.quickPurchases || [];
-            list.innerHTML = qp.length === 0 ? '<p class="text-center py-10 text-gray-400 font-bold">无快捷记录</p>' : 
+            list.innerHTML = qp.length === 0 ? '<p class="text-center py-10 text-gray-400 font-bold">暂无随手记</p>' : 
                 qp.map(p => `<div class="flex items-center p-4 bg-gray-50 dark:bg-zinc-800 rounded-2xl border border-gray-100 dark:border-zinc-700 text-left text-black dark:text-white"><div class="flex-1 overflow-hidden"><p class="text-[10px] font-black text-gray-400 uppercase tracking-tighter">${p.dShort} · ${p.time} · ${p.cat}</p><p class="font-bold truncate">${p.task}</p></div><p class="font-black text-blue-600 ml-2">¥${(parseFloat(p.cost) || 0).toFixed(2)}</p></div>`).join('');
             document.getElementById('purchases-modal').classList.remove('hidden');
         }
 
-        // --- 核心渲染函数 ---
+        // --- 核心渲染 ---
         function render() { applyTheme(); renderTabs(); renderDayContent(); const bri = document.getElementById('base-rate-input'); if (bri) bri.value = (config.rate * 100).toFixed(2); refreshCategorySelects(); }
-        function renderTabs() { const container = document.getElementById('date-tabs'); if(!container) return; container.innerHTML = ''; itinerary.forEach((day, index) => { const tab = document.createElement('div'); tab.className = "relative flex-shrink-0 pt-3 pr-3"; const btn = document.createElement('div'); btn.onclick = () => { activeDayIndex = index; render(); }; btn.className = `date-tab-btn ${activeDayIndex === index ? 'tab-active' : 'bg-gray-50 dark:bg-zinc-800 text-gray-400 font-bold'}`; btn.innerHTML = `<p class="text-[10px] font-bold text-opacity-40 uppercase tracking-tighter">${day.day}</p><p class="text-lg font-bold">${day.short}</p>`; if (isEditMode) { const del = document.createElement('button'); del.className = "absolute top-1 right-1 w-6 h-6 bg-red-500 text-white rounded-full text-[12px] flex items-center justify-center shadow-lg z-10 border-2 border-white dark:border-zinc-900 font-bold text-white"; del.innerHTML = "×"; del.onclick = (e) => { e.stopPropagation(); deleteDay(index); }; tab.appendChild(del); } tab.appendChild(btn); container.appendChild(tab); }); if (isEditMode) { const add = document.createElement('button'); add.className = "flex-shrink-0 w-12 h-12 flex items-center justify-center bg-gray-50 dark:bg-zinc-800 border-2 border-dashed border-gray-200 dark:border-zinc-700 rounded-2xl text-gray-300 text-2xl ml-2 active:bg-gray-100 transition-colors"; add.innerHTML = "+"; add.onclick = openAddDayModal; container.appendChild(add); } }
+
+        function renderTabs() {
+            const container = document.getElementById('date-tabs'); if(!container) return; container.innerHTML = '';
+            // 只要在编辑模式，就展示加号按钮
+            itinerary.forEach((day, index) => {
+                const tab = document.createElement('div'); tab.className = "relative flex-shrink-0 pt-3 pr-3"; 
+                const btn = document.createElement('div'); btn.onclick = () => { activeDayIndex = index; render(); };
+                btn.className = `date-tab-btn ${activeDayIndex === index ? 'tab-active' : 'bg-appleGray dark:bg-zinc-800 text-gray-400 font-bold'}`;
+                btn.innerHTML = `<p class="text-[10px] font-bold text-opacity-40 uppercase tracking-tighter">${day.day}</p><p class="text-lg font-bold">${day.short}</p>`;
+                if (isEditMode) {
+                    const del = document.createElement('button'); del.className = "absolute top-1 right-1 w-6 h-6 bg-red-500 text-white rounded-full text-[12px] flex items-center justify-center shadow-lg z-10 border-2 border-white dark:border-zinc-900 font-bold";
+                    del.innerHTML = "×"; del.onclick = (e) => { e.stopPropagation(); deleteDay(index); }; tab.appendChild(del);
+                }
+                tab.appendChild(btn); container.appendChild(tab);
+            });
+            if (isEditMode) {
+                const add = document.createElement('button'); add.className = "flex-shrink-0 w-12 h-12 flex items-center justify-center bg-gray-50 dark:bg-zinc-800 border-2 border-dashed border-gray-200 dark:border-zinc-700 rounded-2xl text-gray-300 text-2xl ml-2 active:bg-gray-100 transition-colors";
+                add.innerHTML = "+"; add.onclick = openAddDayModal; container.appendChild(add);
+            } else if (itinerary.length === 0) {
+                container.innerHTML = `<p class="text-gray-400 text-xs font-bold py-4">点击“进入编辑”开启旅程</p>`;
+            }
+        }
+
         function renderDayContent() {
-            const container = document.getElementById('day-content'); if (!container || itinerary.length === 0) return;
-            const day = itinerary[activeDayIndex];
-            container.innerHTML = `<div class="flex justify-between items-start mb-6 text-black dark:text-white"><div class="text-left"><h2 class="text-3xl font-black tracking-tight">${day.date}</h2><div class="mt-2 inline-flex items-center text-sm"><span class="text-[10px] font-black uppercase text-gray-300 dark:text-zinc-600 mr-2 tracking-widest text-black dark:text-white">流程:</span><span id="loc-editable" oninput="updateLoc(this.innerText)" class="font-extrabold outline-none min-w-[30px]" contenteditable="${isEditMode}">${day.loc}</span></div></div></div><div class="space-y-4 pb-20" id="events-list"></div><div id="add-placeholders" class="space-y-3 pb-32"></div>`;
+            const container = document.getElementById('day-content'); if (!container) return;
+            if (itinerary.length === 0) { container.innerHTML = `<div class="py-20 text-center"><p class="text-gray-300 font-bold italic text-sm">暂无行程<br><span class="text-[10px] mt-2 block opacity-50">请在编辑模式下添加日期</span></p></div>`; return; }
+            const day = itinerary[activeDayIndex] || itinerary[0];
+            container.innerHTML = `<div class="flex justify-between items-start mb-6 text-black dark:text-white"><div class="text-left"><h2 class="text-3xl font-black tracking-tight">${day.date}</h2><div class="mt-2 inline-flex items-center text-sm"><span class="text-[10px] font-black uppercase text-gray-300 dark:text-zinc-600 mr-2 tracking-widest">流程:</span><span id="loc-editable" oninput="updateLoc(this.innerText)" class="font-extrabold outline-none min-w-[30px]" contenteditable="${isEditMode}">${day.loc}</span></div></div></div><div class="space-y-4 pb-20" id="events-list"></div><div id="add-placeholders" class="space-y-3 pb-32"></div>`;
             const list = document.getElementById('events-list');
             list.innerHTML = day.events.map((ev, eIdx) => {
                 if (ev.type === 'todo') {
-                    return `<div class="todo-card relative p-6 rounded-[2.5rem] transition-all active:scale-[0.98] high-${ev.color || 'none'} shadow-sm border border-gray-50 dark:border-zinc-800 text-black dark:text-white text-left"><div class="flex justify-between items-start mb-4"><div class="flex items-center text-black dark:text-white">${isEditMode ? '<div class="mr-3 text-gray-400 opacity-50"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></div>' : ''}<span class="text-lg font-black text-black dark:text-white">${ev.time}</span><span class="ml-3 text-[10px] font-black uppercase tracking-widest opacity-50 text-black dark:text-white">📍 ${ev.place || '待办'}</span></div><button onclick="openEditor(${activeDayIndex}, ${eIdx}, 'todo')" class="${isEditMode ? '' : 'hidden'} text-[10px] font-black px-3 py-1 bg-black/10 rounded-full">修改</button></div><div class="space-y-3">${(ev.subtasks || []).map((st, sIdx) => `<div class="flex items-center justify-between text-black dark:text-white"><div class="flex items-center flex-1"><input type="checkbox" ${st.done ? 'checked' : ''} onchange="toggleSubtask(${eIdx}, ${sIdx})" class="mr-3"><span class="text-sm font-bold ${st.done ? 'line-through opacity-40 text-gray-500' : ''}">${st.text}</span></div>${st.cost > 0 ? `<span class="text-xs font-black opacity-60">¥${st.cost}</span>` : ''}</div>`).join('')}</div></div>`;
+                    return `<div class="todo-card relative p-6 rounded-[2.5rem] transition-all active:scale-[0.98] high-${ev.color || 'none'} shadow-sm border border-gray-50 dark:border-zinc-800 text-black dark:text-white text-left"><div class="flex justify-between items-start mb-4"><div class="flex items-center">${isEditMode ? '<div class="mr-3 text-gray-400 opacity-50"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></div>' : ''}<span class="text-lg font-black">${ev.time}</span><span class="ml-3 text-[10px] font-black uppercase tracking-widest opacity-50">📍 ${ev.place || '待办'}</span></div><button onclick="openEditor(${activeDayIndex}, ${eIdx}, 'todo')" class="${isEditMode ? '' : 'hidden'} text-[10px] font-black px-3 py-1 bg-black/10 rounded-full">修改</button></div><div class="space-y-3">${(ev.subtasks || []).map((st, sIdx) => `<div class="flex items-center justify-between text-black dark:text-white"><div class="flex items-center flex-1"><input type="checkbox" ${st.done ? 'checked' : ''} onchange="toggleSubtask(${eIdx}, ${sIdx})" class="mr-4"><span class="text-sm font-bold ${st.done ? 'line-through opacity-40 text-gray-500' : ''}">${st.text}</span></div>${st.cost > 0 ? `<span class="text-xs font-black opacity-60">¥${st.cost}</span>` : ''}</div>`).join('')}</div></div>`;
                 } else {
-                    return `<div onclick="openEditor(${activeDayIndex}, ${eIdx}, 'trip')" class="event-card relative flex items-start p-6 rounded-[2.5rem] transition-all active:scale-[0.98] high-${ev.color || 'none'} shadow-sm border border-gray-50 dark:border-zinc-800 text-black dark:text-white text-left text-black dark:text-white"><div class="min-w-[65px] flex-shrink-0 text-xl font-black pt-1">${ev.time}</div><div class="ml-2 flex-1 overflow-hidden text-black dark:text-white"><div class="flex justify-between items-start text-black dark:text-white"><div class="flex-1 pr-2 overflow-hidden text-black dark:text-white">${ev.place ? `<p class="text-[10px] font-black opacity-40 uppercase tracking-tighter mb-1">📍 ${ev.place}</p>` : ''}<p class="text-base font-bold leading-relaxed whitespace-pre-wrap">${ev.task}</p>${ev.image ? `<div class="mt-3"><img src="${ev.image}" class="w-20 h-20 rounded-2xl object-cover border-2 border-white dark:border-zinc-700 shadow-md"></div>` : ''}${ev.cat ? `<div class="category-tag">${ev.cat}</div>` : ''}</div>${ev.cost > 0 ? `<div class="flex-shrink-0 text-right ml-2 text-black dark:text-white"><p class="text-xl font-black text-blue-600 dark:text-blue-400 tracking-tighter">¥${ev.cost}</p></div>` : ''}</div></div></div>`;
+                    return `<div onclick="openEditor(${activeDayIndex}, ${eIdx}, 'trip')" class="event-card relative flex items-start p-6 rounded-[2.5rem] transition-all active:scale-[0.98] high-${ev.color || 'none'} shadow-sm border border-gray-50 dark:border-zinc-800 text-black dark:text-white text-left"><div class="min-w-[65px] flex-shrink-0 text-xl font-black pt-1">${ev.time}</div><div class="ml-2 flex-1 overflow-hidden"><div class="flex justify-between items-start text-black dark:text-white"><div class="flex-1 pr-2 overflow-hidden">${ev.place ? `<p class="text-[10px] font-black opacity-40 uppercase tracking-tighter mb-1">📍 ${ev.place}</p>` : ''}<p class="text-base font-bold leading-relaxed whitespace-pre-wrap">${ev.task}</p>${ev.image ? `<div class="mt-3"><img src="${ev.image}" class="w-20 h-20 rounded-2xl object-cover border-2 border-white dark:border-zinc-700 shadow-md"></div>` : ''}${ev.cat ? `<div class="category-tag">${ev.cat}</div>` : ''}</div>${ev.cost > 0 ? `<div class="flex-shrink-0 text-right ml-2"><p class="text-xl font-black text-blue-600 dark:text-blue-400 tracking-tighter">¥${ev.cost}</p></div>` : ''}</div></div></div>`;
                 }
             }).join('');
             if (isEditMode) {
@@ -407,37 +448,16 @@
                 initSortable(); document.getElementById('fab-container').classList.add('hidden');
             } else {
                 document.getElementById('fab-container').classList.remove('hidden');
-                if (day.events.length === 0) list.innerHTML = `<div class="py-12 text-center text-gray-200 font-bold italic">今日暂无行程</div>`;
+                if (day.events.length === 0) list.innerHTML = `<div class="py-12 text-center text-gray-200 font-bold italic">今日暂无内容</div>`;
             }
         }
 
         // --- 业务固件 ---
         function toggleSubtask(eIdx, sIdx) { itinerary[activeDayIndex].events[eIdx].subtasks[sIdx].done = !itinerary[activeDayIndex].events[eIdx].subtasks[sIdx].done; saveToLocal(); renderDayContent(); }
         function addTodoRow(text = '', cost = '') { const container = document.getElementById('todo-items-editor'); if(!container) return; const div = document.createElement('div'); div.className = "flex gap-2 items-center text-black dark:text-white"; div.innerHTML = `<input type="text" value="${text}" placeholder="事项" class="flex-[2] bg-gray-50 dark:bg-zinc-800 p-3 rounded-xl text-xs font-bold outline-none st-text text-black dark:text-white"><input type="number" value="${cost}" placeholder="¥" class="flex-1 bg-gray-50 dark:bg-zinc-800 p-3 rounded-xl text-xs font-bold outline-none st-cost text-black dark:text-white"><button onclick="this.parentElement.remove()" class="w-10 h-10 text-red-500 font-black">×</button>`; container.appendChild(div); }
-        function openEditor(dIdx, eIdx = null, type = 'trip') {
-            if (!isEditMode) return; activeEditEventIndex = eIdx; currentEditType = type;
-            const ev = eIdx !== null ? itinerary[dIdx].events[eIdx] : null; if (ev) currentEditType = ev.type || 'trip';
-            document.getElementById('edit-modal-title').innerText = currentEditType === 'trip' ? '行程详情' : '待办详情';
-            document.getElementById('in-time').value = ev ? ev.time : ''; document.getElementById('in-place').value = ev ? (ev.place || '') : '';
-            document.getElementById('in-task').value = (ev && ev.type==='trip') ? ev.task : ''; document.getElementById('in-cost').value = (ev && ev.type==='trip') ? ev.cost : '';
-            selectedImageBase64 = (ev && ev.type==='trip') ? ev.image : null; selectColor(ev ? (ev.color || 'none') : 'none');
-            document.getElementById('view-trip-only').classList.toggle('hidden', currentEditType !== 'trip');
-            document.getElementById('view-todo-only').classList.toggle('hidden', currentEditType !== 'todo');
-            document.getElementById('view-image-area').classList.toggle('hidden', currentEditType !== 'trip');
-            const editor = document.getElementById('todo-items-editor'); editor.innerHTML = '';
-            if (ev && ev.type === 'todo') (ev.subtasks || []).forEach(st => addTodoRow(st.text, st.cost));
-            else if (currentEditType === 'todo') addTodoRow();
-            document.getElementById('del-btn').classList.toggle('hidden', eIdx === null); updateImgPreview(); document.getElementById('edit-modal').classList.remove('hidden');
-        }
-        function saveEvent() {
-            const time = document.getElementById('in-time').value || '--:--'; const place = document.getElementById('in-place').value.trim();
-            let newEv = { time, place, color: selectedColor, type: currentEditType };
-            if (currentEditType === 'trip') { newEv.task = document.getElementById('in-task').value || '计画'; newEv.cost = parseFloat(document.getElementById('in-cost').value) || 0; newEv.cat = document.getElementById('in-cat').value; newEv.image = selectedImageBase64; }
-            else { const sts = []; const rows = document.getElementById('todo-items-editor').children; for (let r of rows) { const t = r.querySelector('.st-text').value.trim(); const c = parseFloat(r.querySelector('.st-cost').value) || 0; if (t) sts.push({ text: t, cost: c, done: false }); } newEv.subtasks = sts; }
-            if (activeEditEventIndex !== null) itinerary[activeDayIndex].events[activeEditEventIndex] = newEv; else itinerary[activeDayIndex].events.push(newEv);
-            saveToLocal(); closeModal(); render();
-        }
-        function updateBaseRate(v) { config.rate = parseFloat(v) / 100 || 0.048; saveToLocal(); const rl = document.getElementById('quick-rate-label'); if(rl) rl.innerText = (config.rate * 100).toFixed(2); showToast("汇率已更新"); }
+        function openEditor(dIdx, eIdx = null, type = 'trip') { if (!isEditMode) return; activeEditEventIndex = eIdx; currentEditType = type; const ev = eIdx !== null ? itinerary[dIdx].events[eIdx] : null; if (ev) currentEditType = ev.type || 'trip'; document.getElementById('edit-modal-title').innerText = currentEditType === 'trip' ? '行程详情' : '待办详情'; document.getElementById('in-time').value = ev ? ev.time : ''; document.getElementById('in-place').value = ev ? (ev.place || '') : ''; document.getElementById('in-task').value = (ev && ev.type==='trip') ? ev.task : ''; document.getElementById('in-cost').value = (ev && ev.type==='trip') ? ev.cost : ''; selectedImageBase64 = (ev && ev.type==='trip') ? ev.image : null; selectColor(ev ? (ev.color || 'none') : 'none'); document.getElementById('view-trip-only').classList.toggle('hidden', currentEditType !== 'trip'); document.getElementById('view-todo-only').classList.toggle('hidden', currentEditType !== 'todo'); document.getElementById('view-image-area').classList.toggle('hidden', currentEditType !== 'trip'); const editor = document.getElementById('todo-items-editor'); editor.innerHTML = ''; if (ev && ev.type === 'todo') (ev.subtasks || []).forEach(st => addTodoRow(st.text, st.cost)); else if (currentEditType === 'todo') addTodoRow(); document.getElementById('del-btn').classList.toggle('hidden', eIdx === null); updateImgPreview(); document.getElementById('edit-modal').classList.remove('hidden'); }
+        function saveEvent() { const time = document.getElementById('in-time').value || '--:--'; const place = document.getElementById('in-place').value.trim(); let newEv = { time, place, color: selectedColor, type: currentEditType }; if (currentEditType === 'trip') { newEv.task = document.getElementById('in-task').value || '计画'; newEv.cost = parseFloat(document.getElementById('in-cost').value) || 0; newEv.cat = document.getElementById('in-cat').value; newEv.image = selectedImageBase64; } else { const sts = []; const rows = document.getElementById('todo-items-editor').children; for (let r of rows) { const t = r.querySelector('.st-text').value.trim(); const c = parseFloat(r.querySelector('.st-cost').value) || 0; if (t) sts.push({ text: t, cost: c, done: false }); } newEv.subtasks = sts; } if (activeEditEventIndex !== null) itinerary[activeDayIndex].events[activeEditEventIndex] = newEv; else itinerary[activeDayIndex].events.push(newEv); saveToLocal(); closeModal(); render(); }
+        function updateBaseRate(v) { config.rate = parseFloat(v) / 100 || 0.048; saveToLocal(); const rl = document.getElementById('quick-rate-label'); if(rl) rl.innerText = (config.rate * 100).toFixed(2); showToast("汇率同步成功"); }
         function convert(s) { const j = document.getElementById('calc-jpy'), c = document.getElementById('calc-cny'); if(!j || !c) return; if (s === 'jpy') c.value = j.value ? (parseFloat(j.value) * config.rate).toFixed(2) : ''; else j.value = c.value ? (parseFloat(c.value) / config.rate).toFixed(0) : ''; }
         function openCalc() { document.getElementById('calc-modal').classList.remove('hidden'); }
         function closeCalc() { document.getElementById('calc-modal').classList.add('hidden'); }
@@ -447,17 +467,17 @@
         function closeModal() { document.getElementById('edit-modal').classList.add('hidden'); }
         function openResetModal() { document.getElementById('reset-verify-input').value=''; document.getElementById('reset-confirm-modal').classList.remove('hidden'); }
         function closeResetModal() { document.getElementById('reset-confirm-modal').classList.add('hidden'); }
-        function executeReset() { if (document.getElementById('reset-verify-input').value.trim().toLowerCase() === 'ok') { itinerary = JSON.parse(JSON.stringify(DEFAULT_ITINERARY)); config.budget = 0; config.customCategories = []; config.quickPurchases = []; saveToLocal(); closeResetModal(); render(); } else showToast("请输入 ok"); }
+        function executeReset() { if (document.getElementById('reset-verify-input').value.trim().toLowerCase() === 'ok') { itinerary = []; config.budget = 0; config.customCategories = []; config.quickPurchases = []; saveToLocal(); closeResetModal(); render(); } else showToast("请输入 ok"); }
         function openAddDayModal() { document.getElementById('add-day-modal').classList.remove('hidden'); }
         function closeAddDayModal() { document.getElementById('add-day-modal').classList.add('hidden'); }
         function confirmAddDay() { const p = document.getElementById('new-day-picker').value; if (!p) return showToast("选日期"); const d = new Date(p); const w = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"]; const newDay = { date: `${d.getMonth()+1}月${d.getDate()}日`, short: `${d.getMonth()+1}.${d.getDate()}`, day: w[d.getDay()], loc: document.getElementById('new-day-loc').value||'无', events: [] }; itinerary.push(newDay); itinerary.sort((a,b) => { const parse = (s) => { let x=s.split('.'); return new Date(2024, x[0]-1, x[1]) }; return parse(a.short) - parse(b.short); }); saveToLocal(); closeAddDayModal(); activeDayIndex = itinerary.findIndex(x => x.short === newDay.short); render(); }
         function toggleEditMode() { isEditMode = !isEditMode; document.getElementById('edit-mode-btn').innerText = isEditMode ? '完成预览' : '进入编辑'; document.getElementById('reset-btn').classList.toggle('hidden', !isEditMode); if (!isEditMode && sortableInstance) { sortableInstance.destroy(); sortableInstance = null; } render(); }
         function selectColor(c) { selectedColor=c; ['none','yellow','red','blue','green'].forEach(x => { const el = document.getElementById('col-'+x); if(el) el.classList.remove('ring-4','ring-black','dark:ring-white'); }); const target = document.getElementById('col-'+c); if(target) target.classList.add('ring-4','ring-black','dark:ring-white'); }
-        function updateLoc(v) { itinerary[activeDayIndex].loc=v; saveToLocal(); }
+        function updateLoc(v) { if(itinerary[activeDayIndex]) { itinerary[activeDayIndex].loc=v; saveToLocal(); } }
         function deleteCurrentEvent() { itinerary[activeDayIndex].events.splice(activeEditEventIndex, 1); saveToLocal(); closeModal(); render(); }
         function deleteDay(idx) { if(confirm('全删吗？')){ itinerary.splice(idx,1); activeDayIndex=Math.max(0, activeDayIndex-1); saveToLocal(); render(); } }
         function handleImageUpload(input) { const file = input.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = function(e) { const img = new Image(); img.onload = function() { const canvas = document.createElement('canvas'); const MAX = 800; let w = img.width, h = img.height; if (w > MAX) { h *= MAX / w; w = MAX; } canvas.width = w; canvas.height = h; canvas.getContext('2d').drawImage(img, 0, 0, w, h); selectedImageBase64 = canvas.toDataURL('image/jpeg', 0.7); updateImgPreview(); }; img.src = e.target.result; }; reader.readAsDataURL(file); }
-        function updateImgPreview() { const b = document.getElementById('img-preview-box'), s = document.getElementById('img-status-text'), d = document.getElementById('del-img-btn'); if(!b || !s || !d) return; if (selectedImageBase64) { b.innerHTML = `<img src="${selectedImageBase64}" class="w-full h-full object-cover">`; s.innerText = "已加载"; d.classList.remove('hidden'); } else { b.innerHTML = `🖼️`; s.innerText = "无图"; d.classList.add('hidden'); } }
+        function updateImgPreview() { const b = document.getElementById('img-preview-box'), sText = document.getElementById('img-status-text'), d = document.getElementById('del-img-btn'); if(!b || !sText || !d) return; if (selectedImageBase64) { b.innerHTML = `<img src="${selectedImageBase64}" class="w-full h-full object-cover">`; sText.innerText = "已加载"; d.classList.remove('hidden'); } else { b.innerHTML = `🖼️`; sText.innerText = "无图"; d.classList.add('hidden'); } }
         function clearSelectedImg() { selectedImageBase64 = null; updateImgPreview(); }
         function viewFullImg(e, src) { e.stopPropagation(); document.getElementById('viewer-content').src = src; document.getElementById('img-viewer').classList.remove('hidden'); }
         function initSortable() { const el = document.getElementById('events-list'); if (sortableInstance) sortableInstance.destroy(); sortableInstance = Sortable.create(el, { animation: 250, ghostClass: 'sortable-ghost', dragClass: 'sortable-drag', handle: '.event-card, .todo-card', delay: 300, delayOnTouchOnly: true, touchStartThreshold: 5, onEnd: function (evt) { const day = itinerary[activeDayIndex].events; const item = day.splice(evt.oldIndex, 1)[0]; day.splice(evt.newIndex, 0, item); saveToLocal(); renderDayContent(); } }); }
